@@ -11,6 +11,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <random>
+#include <hb.h>
+#include <hb-ft.h>
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+
 
 GLuint hexapod_meshes_for_lit_color_texture_program = 0;
 Load< MeshBuffer > hexapod_meshes(LoadTagDefault, []() -> MeshBuffer const * {
@@ -41,6 +47,50 @@ Load< Sound::Sample > dusty_floor_sample(LoadTagDefault, []() -> Sound::Sample c
 });
 
 PlayMode::PlayMode() : scene(*hexapod_scene) {
+	FT_Library library;
+	FT_Face face;
+	FT_Error error = FT_Init_FreeType(&library);
+	if (error) { std::cout << "Init library failed." << std::endl; }
+	hb_buffer_t* buf = hb_buffer_create();
+	hb_buffer_add_utf8(buf, "Hello World", -1, 0, -1);
+	hb_buffer_set_direction(buf, HB_DIRECTION_LTR);
+	hb_buffer_set_script(buf, HB_SCRIPT_LATIN);
+	hb_buffer_set_language(buf, hb_language_from_string("en", -1));
+	error = FT_New_Face(library, "c:/windows/fonts/brushsci.ttf", 0, &face);
+	if (error == FT_Err_Unknown_File_Format)
+	{
+		std::cout << "Unknown font format." << std::endl;
+	}
+	else if (error)
+	{
+		std::cout << "Can't open font file." << std::endl;
+	}
+	assert(face != nullptr);
+	FT_Set_Char_Size(face, 0, 1000, 0, 0);
+	hb_font_t* font = hb_ft_font_create(face, NULL);
+	hb_shape(font, buf, NULL, 0);
+	unsigned int glyph_count;
+	hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buf, &glyph_count);
+	hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions(buf, &glyph_count);
+	double cursor_x = 0.0, cursor_y = 0.0;
+	for (uint32_t i = 0; i < glyph_count; ++i) {
+		auto glyphid = glyph_info[i].codepoint;
+		auto x_offset = glyph_pos[i].x_offset / 64.0;
+		auto y_offset = glyph_pos[i].y_offset / 64.0;
+		auto x_advance = glyph_pos[i].x_advance / 64.0;
+		auto y_advance = glyph_pos[i].y_advance / 64.0;
+		//   draw_glyph(glyphid, cursor_x + x_offset, cursor_y + y_offset);
+		GLuint textureId;
+		glGenTextures(1, &textureId);
+		glBindTexture(GL_TEXTURE_2D, textureId);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, (GLsizei)x_advance, (GLsizei)y_advance, 0, GL_RGBA, GL_UNSIGNED_BYTE, buf);
+		cursor_x += x_advance;
+		cursor_y += y_advance;
+	}
+	/*
+	hb_buffer_destroy(buf);
+	hb_font_destroy(hb_ft_font);*/
+
 	//get pointers to leg for convenience:
 	for (auto &transform : scene.transforms) {
 		if (transform.name == "Hip.FL") hip = &transform;
