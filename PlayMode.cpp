@@ -16,7 +16,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-
+#include <fstream>
+#include <filesystem>
 
 GLuint hexapod_meshes_for_lit_color_texture_program = 0;
 Load< MeshBuffer > hexapod_meshes(LoadTagDefault, []() -> MeshBuffer const * {
@@ -112,6 +113,8 @@ PlayMode::PlayMode() : scene(*hexapod_scene) {
 	//start music loop playing:
 	// (note: position will be over-ridden in update())
 	leg_tip_loop = Sound::loop_3D(*dusty_floor_sample, 1.0f, get_leg_tip_position(), 10.0f);
+
+	load_text_scenes();
 }
 
 PlayMode::~PlayMode() {
@@ -254,7 +257,7 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
-	scene.draw(*camera);
+	/*scene.draw(*camera);
 
 	{ //use DrawLines to overlay some text:
 		glDisable(GL_DEPTH_TEST);
@@ -276,11 +279,59 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 			glm::vec3(-aspect + 0.1f * H + ofs, -1.0 + + 0.1f * H + ofs, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
 			glm::u8vec4(0xff, 0xff, 0xff, 0x00));
-	}
+	}*/
 	GL_ERRORS();
 }
 
 glm::vec3 PlayMode::get_leg_tip_position() {
 	//the vertex position here was read from the model in blender:
 	return lower_leg->make_local_to_world() * glm::vec4(-1.26137f, -11.861f, 0.0f, 1.0f);
+}
+void PlayMode::load_text_scenes() {
+	// From https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
+	std::string path = data_path("texts");
+	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+		std::cout << entry.path() << std::endl;
+		std::ifstream f (entry.path());
+		std::string line;
+		if (!f.is_open()) {
+			std::cout << "Unable to open file " << entry.path() << std::endl;
+			continue;
+		}
+		if (!std::getline(f, line)) {
+			std::cout << entry.path() << " is an empty file! Skipped." << std::endl;
+		}
+		int id = std::stoi(line);
+		std::string description = "";
+
+		while (std::getline(f, line)) {
+			if (line.rfind("##", 0) == 0)
+				break;
+			description.append(line.append("\n"));
+		}
+		description = description.substr(0, description.size() - 1);
+		TextScene ts = { id, description };
+		while (line.rfind("##", 0) == 0) {
+			ts.next_scene.push_back(std::stoi(line.substr(2)));
+			std::string choice_des = "";
+			while (std::getline(f, line)) {
+				if (line.rfind("##", 0) == 0)
+					break;
+				choice_des.append(line.append("\n"));
+			}
+			choice_des = choice_des.substr(0, choice_des.size() - 1);
+
+			ts.choice_descriptions.push_back(choice_des);
+		}
+		text_scenes[id] = ts;
+		f.close();
+	}
+	std::map<int, TextScene>::iterator it;
+	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
+		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
+		for (int i = 0; i < it->second.next_scene.size(); i++) {
+			std::cout << "Choice: " << it->second.next_scene[i] << std::endl;
+			std::cout << "Description: " << it->second.choice_descriptions[i] << std::endl;
+		}
+	}
 }

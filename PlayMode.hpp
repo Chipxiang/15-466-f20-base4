@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <deque>
-
+#include <map>
 struct PlayMode : Mode {
 	PlayMode();
 	virtual ~PlayMode();
@@ -44,4 +44,13 @@ struct PlayMode : Mode {
 	
 	//camera:
 	Scene::Camera *camera = nullptr;
+
+	struct TextScene {
+		int id;
+		std::string description;
+		std::vector<std::string> choice_descriptions;
+		std::vector<int> next_scene;
+	};
+	std::map<int, TextScene> text_scenes;
+	void load_text_scenes();
 };
