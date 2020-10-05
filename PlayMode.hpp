@@ -52,5 +52,7 @@ struct PlayMode : Mode {
 		std::vector<int> next_scene;
 	};
 	std::map<int, TextScene> text_scenes;
+	int curr_scene;
+	int curr_choice;
 	void load_text_scenes();
 };

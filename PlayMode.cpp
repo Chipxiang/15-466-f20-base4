@@ -115,6 +115,8 @@ PlayMode::PlayMode() : scene(*hexapod_scene) {
 	leg_tip_loop = Sound::loop_3D(*dusty_floor_sample, 1.0f, get_leg_tip_position(), 10.0f);
 
 	load_text_scenes();
+	curr_choice = 0;
+	curr_scene = 1;
 }
 
 PlayMode::~PlayMode() {
@@ -122,7 +124,7 @@ PlayMode::~PlayMode() {
 
 bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
 
-	if (evt.type == SDL_KEYDOWN) {
+	/*if (evt.type == SDL_KEYDOWN) {
 		if (evt.key.keysym.sym == SDLK_ESCAPE) {
 			SDL_SetRelativeMouseMode(SDL_FALSE);
 			return true;
@@ -175,8 +177,28 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			);
 			return true;
 		}
+	}*/
+	// Reference https://github.com/Dmcdominic/15-466-f20-game4/blob/menu-mode/MenuMode.cpp
+	if (!text_scenes[curr_scene].choice_descriptions.empty()) {
+		if (evt.type == SDL_KEYDOWN) {
+			if (evt.key.keysym.sym == SDLK_DOWN) {
+				curr_choice += 1;
+				curr_choice %= text_scenes[curr_scene].choice_descriptions.size();
+				return true;
+			}
+			else if (evt.key.keysym.sym == SDLK_UP) {
+				curr_choice -= 1;
+				if (curr_choice < 0)
+					curr_choice += (int)text_scenes[curr_scene].choice_descriptions.size();
+				return true;
+			}
+			else if (evt.key.keysym.sym == SDLK_SPACE) {
+				curr_scene = text_scenes[curr_scene].next_scene[curr_choice];
+				curr_choice = 0;
+			}
+		}
 	}
-
+	
 	return false;
 }
 
@@ -257,8 +279,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
-	/*scene.draw(*camera);
-
+	/*scene.draw(*camera);*/
+	// Reference: https://github.com/Dmcdominic/15-466-f20-game4/blob/menu-mode/MenuMode.cpp
 	{ //use DrawLines to overlay some text:
 		glDisable(GL_DEPTH_TEST);
 		float aspect = float(drawable_size.x) / float(drawable_size.y);
@@ -268,18 +290,27 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 			0.0f, 0.0f, 1.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f
 		));
+		glm::u8vec4 color = glm::u8vec4(0x00, 0x00, 0x00, 0x00);
+		constexpr float H = 0.2f;
 
-		constexpr float H = 0.09f;
-		lines.draw_text("Mouse motion rotates camera; WASD moves; escape ungrabs mouse",
-			glm::vec3(-aspect + 0.1f * H, -1.0 + 0.1f * H, 0.0),
+		lines.draw_text(text_scenes[curr_scene].description,
+			glm::vec3(-aspect + 0.1f * H, 1.0f - 1.1f * H, 0.0),
 			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
-			glm::u8vec4(0x00, 0x00, 0x00, 0x00));
-		float ofs = 2.0f / drawable_size.y;
-		lines.draw_text("Mouse motion rotates camera; WASD moves; escape ungrabs mouse",
-			glm::vec3(-aspect + 0.1f * H + ofs, -1.0 + + 0.1f * H + ofs, 0.0),
-			glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
-			glm::u8vec4(0xff, 0xff, 0xff, 0x00));
-	}*/
+			color
+		);
+		float y_offset = -0.5f;
+		for (int i = 0; i < text_scenes[curr_scene].choice_descriptions.size(); i++) {
+			bool is_selected = i == curr_choice;
+			color = (is_selected ? glm::u8vec4(0xff, 0xff, 0xff, 0x00) : glm::u8vec4(0x00, 0x00, 0x00, 0x00));
+			lines.draw_text(text_scenes[curr_scene].choice_descriptions[i],
+				glm::vec3(-aspect + 0.1f * H, 1.0f - 1.1f * H + y_offset, 0.0),
+				glm::vec3(H, 0.0f, 0.0f), glm::vec3(0.0f, H, 0.0f),
+				color
+			);
+			y_offset -= 0.5f;
+		}
+		
+	}
 	GL_ERRORS();
 }
 
@@ -300,6 +331,7 @@ void PlayMode::load_text_scenes() {
 		}
 		if (!std::getline(f, line)) {
 			std::cout << entry.path() << " is an empty file! Skipped." << std::endl;
+			continue;
 		}
 		int id = std::stoi(line);
 		std::string description = "";
