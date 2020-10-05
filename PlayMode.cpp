@@ -2,7 +2,7 @@
 
 
 #include <iostream>
-constexpr const char * const kFontPath { "/System/Library/Fonts/SFCompactRounded.ttf" };
+//constexpr const char * const kFontPath { "/System/Library/Fonts/SFCompactRounded.ttf" };
 
 
 #include <random>
@@ -27,7 +27,8 @@ PlayMode::PlayMode() {
 	if (error) {
 		std::cout << "Init library failed." << std::endl;
 	}
-
+	std::string k_font_path_str = data_path("ReallyFree-ALwl7.ttf");
+	const char* kFontPath = k_font_path_str.c_str();
 	error = FT_New_Face(library, kFontPath, 0, &test_face);
 	FT_New_Face(library, kFontPath, 0, &test_face2);
 
