@@ -6,6 +6,10 @@
 
 #include <glm/glm.hpp>
 
+#include <vector>
+#include <deque>
+#include <map>
+
 struct PlayMode : Mode {
 	PlayMode();
 	virtual ~PlayMode();
@@ -18,7 +22,25 @@ struct PlayMode : Mode {
 	float total_elapsed = 0.0f;
 	FT_Library library;
 	FT_Face test_face;
+	FT_Face test_face2;
 
 	Sentence* drawFont_p;
+	Sentence* scene_sen = nullptr;
+	std::vector<Sentence*> option_sens;
 
+	//music coming from the tip of the leg (as a demonstration):
+
+	//camera:
+	Scene::Camera *camera = nullptr;
+
+	struct TextScene {
+		int id;
+		std::string description;
+		std::vector<std::string> choice_descriptions;
+		std::vector<int> next_scene;
+	};
+	std::map<int, TextScene> text_scenes;
+	int curr_scene;
+	int curr_choice;
+	void load_text_scenes();
 };

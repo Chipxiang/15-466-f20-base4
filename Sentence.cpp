@@ -7,36 +7,32 @@
 
 unsigned int index_buffer_content[] {0, 1, 2, 1, 2, 3};
 
-GLuint Sentence::index_buffer_  {0 };
+GLuint Sentence::index_buffer_ {0};
 
 Load<void> load_index_buffer(LoadTagEarly, [](){
-    glGenBuffers(1, &Sentence::index_buffer_);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Sentence::index_buffer_);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), index_buffer_content, GL_STATIC_DRAW);
+	glGenBuffers(1, &Sentence::index_buffer_);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Sentence::index_buffer_);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), index_buffer_content, GL_STATIC_DRAW);
 });
 
-Sentence::Sentence(FT_Library& library, const char* font_path)
-//:library_(library)
-{
-    FT_Error error;
+Sentence::Sentence(FT_Library& library, const char* font_path) {
+	FT_Error error;
 
-    error = FT_New_Face(library, font_path, 0, &face_);
+	error = FT_New_Face(library, font_path, 0, &face_);
 	if (error == FT_Err_Unknown_File_Format) {
-        throw std::runtime_error("The font file could be opened and read, but it appears that its font format is unsupported!");
+		throw std::runtime_error("The font file could be opened and read, but it appears that its font format is unsupported!");
 	} else if (error) {
-		std::cout<<"error code: "<<(int)error<<std::endl;
-        throw std::runtime_error("The font file could not be opened or read, or that it is broken!");
+	std::cout<<"error code: "<<(int)error<<std::endl;
+		throw std::runtime_error("The font file could not be opened or read, or that it is broken!");
 	}
 
 	if (!face_) {
-        throw std::runtime_error("Wrong font!");
+		throw std::runtime_error("Wrong font!");
 	}
 }
 
 
-Sentence::Sentence(FT_Face face)
-//:library_(library)
-{
+Sentence::Sentence(FT_Face face) {
 	face_ = face;
 	if (!face_) {
 		throw std::runtime_error("Wrong font!");
@@ -44,13 +40,14 @@ Sentence::Sentence(FT_Face face)
 }
 
 
-void Sentence::Draw(const glm::uvec2& drawable_size)
-{
+void Sentence::Draw(const glm::uvec2& drawable_size) {
+	if(!buf_ || !font_) {
+		return;
+	}
 	glUseProgram(texture2d_program->program);
 
-    float cursor_x = GetPixelPos(anchor_.x, drawable_size.x), cursor_y = GetPixelPos(anchor_.y, drawable_size.y);
+	float cursor_x = GetPixelPos(anchor_.x, drawable_size.x), cursor_y = GetPixelPos(anchor_.y, drawable_size.y);
 	FT_GlyphSlot slot = face_->glyph;
-//	std::cout<<"right:"<<cursor_x<<" " << cursor_y<<std::endl;
 
 	for (unsigned int i = 0; i < glyph_count_; ++i) {
 		auto glyphid = glyph_info_[i].codepoint;
@@ -60,42 +57,41 @@ void Sentence::Draw(const glm::uvec2& drawable_size)
 		auto y_advance = glyph_pos_[i].y_advance / 64.0f;
 
 
-        FT_Error error = FT_Load_Char(face_, text_[i], FT_LOAD_RENDER);
-        if (error) {
-        	printf("%d\n", glyphid);
-	        continue;
-        }
+		FT_Error error = FT_Load_Char(face_, text_[i], FT_LOAD_RENDER);
+		if (error) {
+			printf("%d\n", glyphid);
+			continue;
+		}
 
-        auto& bitmap = slot->bitmap;
+		auto& bitmap = slot->bitmap;
 
-        float start_x = GetOpenGLPos(cursor_x + x_offset, drawable_size.x);
-        float start_y = GetOpenGLPos(cursor_y + y_offset, drawable_size.y);
-        float end_x = start_x + bitmap.width * 2.0f / drawable_size.x;
-        float end_y = start_y + bitmap.rows * 2.0f / drawable_size.y;
-//		std::cout<<"my:"<<start_x<<" " << start_y<<" "<<end_x<<" " <<end_y<<std::endl;
+		float start_x = GetOpenGLPos(cursor_x + x_offset, drawable_size.x);
+		float start_y = GetOpenGLPos(cursor_y + y_offset, drawable_size.y);
+		float end_x = start_x + bitmap.width * 2.0f / drawable_size.x;
+		float end_y = start_y + bitmap.rows * 2.0f / drawable_size.y;
 
-        Texture2DProgram::Vertex vertexes[] {
-            {{start_x, start_y}, color_, {0, 1}},
-            {{end_x, start_y}, color_, {1, 1}},
-            {{start_x, end_y}, color_, {0, 0}},
-            {{end_x, end_y}, color_, {1, 0}}
-        };
+		Texture2DProgram::Vertex vertexes[] {
+			{{start_x, start_y}, color_, {0, 1}},
+			{{end_x, start_y}, color_, {1, 1}},
+			{{start_x, end_y}, color_, {0, 0}},
+			{{end_x, end_y}, color_, {1, 0}}
+		};
 
-        GLuint texture_id = texture_ids_[i];
-        GLuint vertex_buffer, vertex_array;
+		GLuint texture_id = texture_ids_[i];
+		GLuint vertex_buffer, vertex_array;
 
-        glGenBuffers(1, &vertex_buffer);
-        vertex_array = texture2d_program->GetVao(vertex_buffer);
+		glGenBuffers(1, &vertex_buffer);
+		vertex_array = texture2d_program->GetVao(vertex_buffer);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
-        glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Texture2DProgram::Vertex), static_cast<const void*>(vertexes), GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+		glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Texture2DProgram::Vertex), static_cast<const void*>(vertexes), GL_STATIC_DRAW);
 
-        glBindVertexArray(vertex_array);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture_id);
+		glBindVertexArray(vertex_array);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer_);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture_id);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, static_cast<const void*>(0));
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, static_cast<const void*>(0));
 
 		glDeleteBuffers(1, &vertex_buffer);
 		glDeleteVertexArrays(1, &vertex_array);
@@ -107,35 +103,30 @@ void Sentence::Draw(const glm::uvec2& drawable_size)
 
 void Sentence::ClearText()
 {
-    for (GLuint texture_id : texture_ids_)
-    {
-        glDeleteTextures(1, &texture_id);
-    }
-    texture_ids_.clear();
+	for (GLuint texture_id : texture_ids_)
+	{
+		glDeleteTextures(1, &texture_id);
+	}
+	texture_ids_.clear();
 
-    if (buf_) {
-        hb_buffer_destroy(buf_);
-        buf_ = nullptr;
-    }
+	if (buf_) {
+		hb_buffer_destroy(buf_);
+		buf_ = nullptr;
+	}
 
-    if (font_) {
-        hb_font_destroy(font_);
-        font_ = nullptr;
-    }
-//	if(face_) {
-//		FT_Done_Face(face_);
-//	}
+	if (font_) {
+		hb_font_destroy(font_);
+		font_ = nullptr;
+	}
 }
 
 Sentence::~Sentence()
 {
-	std::cout<<"here\n";
-
 	ClearText();
 }
 
 // pos: OpenGL position (-1, 1)
-void Sentence::SetText(const char* text, FT_F26Dot6 size, const glm::u8vec4& color, const glm::vec2& anchor) {
+void Sentence::SetText(const char* text, FT_F26Dot6 size, glm::u8vec4 color, const glm::vec2& anchor) {
 	ClearText();
 	anchor_ = anchor;
 	color_ = color;
@@ -171,7 +162,6 @@ void Sentence::SetText(const char* text, FT_F26Dot6 size, const glm::u8vec4& col
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glGenTextures(1, &texture_id);
 		glBindTexture(GL_TEXTURE_2D, texture_id);
-		std::cout << texture_id << std::endl;
 
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

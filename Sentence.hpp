@@ -13,36 +13,34 @@
 
 class Sentence {
 private:
-    FT_Face face_;
+	FT_Face face_;
 
-    std::vector<GLuint> texture_ids_;
+	std::vector<GLuint> texture_ids_;
 
-    unsigned int glyph_count_;
-    hb_font_t* font_ { nullptr };
-    hb_buffer_t* buf_ { nullptr };
-    hb_glyph_info_t* glyph_info_ { nullptr };
-    hb_glyph_position_t* glyph_pos_ { nullptr };
-    glm::vec2 anchor_;
-    std::string text_;
-    glm::u8vec4 color_;
+	unsigned int glyph_count_;
+	hb_font_t* font_ { nullptr };
+	hb_buffer_t* buf_ { nullptr };
+	hb_glyph_info_t* glyph_info_ { nullptr };
+	hb_glyph_position_t* glyph_pos_ { nullptr };
+	glm::vec2 anchor_;
+	std::string text_;
+	glm::u8vec4 color_;
 
-    float GetOpenGLPos(float pos, int drawable_size)
-    {
-        return (2 * pos) / drawable_size - 1;
-    }
+	float GetOpenGLPos(float pos, int drawable_size) {
+		return (2 * pos) / drawable_size - 1;
+	}
 
-    float GetPixelPos(float pos, int drawable_size)
-    {
-        return (pos + 1) * drawable_size / 2.0f;
-    }
+	float GetPixelPos(float pos, int drawable_size) {
+		return (pos + 1) * drawable_size / 2.0f;
+	}
 public:
-    static GLuint index_buffer_;
+	static GLuint index_buffer_;
 
 	Sentence(FT_Library& library, const char* font_path);
 	Sentence(FT_Face face);
-    ~Sentence();
+	~Sentence();
 
-    void Draw(const glm::uvec2& drawable_size);
-    void SetText(const char* text, FT_F26Dot6 size, const glm::u8vec4& color, const glm::vec2& anchor);
-    void ClearText();
+	void Draw(const glm::uvec2& drawable_size);
+	void SetText(const char* text, FT_F26Dot6 size, glm::u8vec4 color, const glm::vec2& anchor);
+	void ClearText();
 };

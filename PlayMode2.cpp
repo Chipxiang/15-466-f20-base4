@@ -379,6 +379,10 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	hb_font_destroy(font);
 }
 
+void PlayMode::clear_prev_sentense() {
+
+}
+
 glm::vec3 PlayMode::get_leg_tip_position() {
 	//the vertex position here was read from the model in blender:
 	return lower_leg->make_local_to_world() * glm::vec4(-1.26137f, -11.861f, 0.0f, 1.0f);
