@@ -105,9 +105,11 @@ GAME_NAMES =
 	main
 	LitColorTextureProgram
 	#ColorTextureProgram #not used right now, but you might want it
+	Texture2DProgram
 	Sound
 	load_wav
 	load_opus
+	Sentence
 	;
 
 COMMON_NAMES =
