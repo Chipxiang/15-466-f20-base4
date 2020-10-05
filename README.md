@@ -18,3 +18,5 @@ Sources: (TODO: list a source URL for any assets you did not create yourself. Ma
 
 This game was built with [NEST](NEST.md).
 
+## Resource
+Sound keyboard: https://freesound.org/people/Trollarch2/sounds/331656/

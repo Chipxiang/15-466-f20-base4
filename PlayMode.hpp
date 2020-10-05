@@ -3,6 +3,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "Sentence.hpp"
+#include "Sound.hpp"
 
 #include <glm/glm.hpp>
 
@@ -38,9 +39,17 @@ struct PlayMode : Mode {
 		std::string description;
 		std::vector<std::string> choice_descriptions;
 		std::vector<int> next_scene;
+
+		float elapsed; // used for text animation
+		std::string visible_desc;
 	};
 	std::map<int, TextScene> text_scenes;
 	int curr_scene;
 	int curr_choice;
 	void load_text_scenes();
+
+	// secs interval to pop out a char
+	float pop_char_interval = 0.1f;
+
+	std::shared_ptr<Sound::PlayingSample> typing_sample;
 };
