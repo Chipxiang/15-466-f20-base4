@@ -1,7 +1,6 @@
 1
-1234567890123456789012345678901234567890123456789012345678901234567890
-testit
+"Where am I?"
+You wake up on a cold, dusty floor. 
+Dim, flickering lamplight glows from an old chandlier.
 ## 2
-Go to scene number 2
-## 3
-Go to scene number 3
+Get up and look around.

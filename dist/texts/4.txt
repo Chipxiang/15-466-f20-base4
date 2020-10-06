@@ -1,2 +1,10 @@
 4
-This is last scene so there's no choice.
+The only door is on the east side of the room.
+## 5
+Check the bookshelf.
+## 6
+Investigate the drawers.
+## 7
+Approach the bed.
+## 2
+Go back to center of room.

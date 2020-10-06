@@ -1,10 +1,12 @@
 3
-This is scene number 3
-Yeah!
+There is a large bookshelf against the west wall of the room.
+Next to the north wall is bed that looks like a hundred years old.
+A chest of drawers is placed between the bed and bookshelf.
+## 5
+Check the bookshelf.
+## 6
+Investigate the drawers.
+## 7
+Approach the bed.
 ## 2
-Go to scene number 2
-Previous one
-## 1
-Go to scene number 1
-##     4
-Go to final scene
+Go back to center of room.
