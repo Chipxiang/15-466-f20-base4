@@ -22,7 +22,7 @@ Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -
 
 #if defined(_WIN32)
 	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
-		std::string path_string = entry.path().filename().string();
+		std::string path_string = entry.path().string();
 #else
 	struct dirent *entry;
 	DIR *dp;
@@ -256,7 +256,7 @@ void PlayMode::load_text_scenes() {
 
 #if defined(_WIN32)
 	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
-		std::string txt_path = entry.path().filename().string();
+		std::string txt_path = entry.path().string();
 #else
 	struct dirent *entry;
 	DIR *dp;
