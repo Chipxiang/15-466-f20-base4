@@ -11,5 +11,5 @@ Go back to west side of room.
 drawer-open
 && 76
 drawer-open
-&& 106
+&& 116
 drawer-open

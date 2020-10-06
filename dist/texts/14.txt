@@ -1,10 +1,19 @@
 14
-You tried to open the fourth drawers again.
-The drawer is unlocked.
-You found a piece of paper inside.
-There's a number on it:
+You opened the drawers one by one.
+You found a sock in the first drawer.
+You found a candy in the second drawer.
+You found a spider in the third drawer.
+It ran away.
+The fourth drawer is unlocked.
+You found a piece of paper with a number written on it:
 15666
 ## 3
 Go back to west side of room.
-&& 28
+&& 36
+drawer-open
+&& 76
+drawer-open
+&& 116
+drawer-open
+&& 200
 drawer-open
