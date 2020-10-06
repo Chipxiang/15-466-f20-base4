@@ -140,7 +140,7 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 						text_scenes[curr_scene].next_scene[curr_choice] = 15;
 					}
 					else {
-						size_t pos = text_scenes[curr_scene].description.find_last_of("\n") + 1;
+						size_t pos = text_scenes[curr_scene].description.find("PIN:") + 5;
 						text_scenes[curr_scene].description.replace(pos, door_password.length(), door_original);
 					}
 				}
@@ -192,6 +192,7 @@ void PlayMode::update(float elapsed) {
 		int char_size = (int)(text_scenes[curr_scene].elapsed / pop_char_interval);
 		text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description.substr(0, char_size);
 		if (text_scenes[curr_scene].sounds.find((int)text_scenes[curr_scene].visible_desc.size()) != text_scenes[curr_scene].sounds.end()) {
+			std::cout << "Play sound " << text_scenes[curr_scene].sounds[(int)text_scenes[curr_scene].visible_desc.size()] << std::endl;
 			if (!text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()]) {
 				Sound::play((*sound_samples).at(text_scenes[curr_scene].sounds[(int)text_scenes[curr_scene].visible_desc.size()]));
 				text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()] = true;
@@ -288,6 +289,8 @@ void PlayMode::load_text_scenes() {
 		while (std::getline(f, line)) {
 			if (line.rfind("##", 0) == 0)
 				break;
+			if (line.rfind("&&", 0) == 0)
+				break;
 			description.append(line.append("\n"));
 		}
 		description = description.substr(0, description.size() - 1);
@@ -305,7 +308,6 @@ void PlayMode::load_text_scenes() {
 			choice_des = choice_des.substr(0, choice_des.size() - 1);
 			ts.choice_descriptions.push_back(choice_des);
 		}
-
 		while (line.rfind("&&", 0) == 0) {
 			int start_pos = std::stoi(line.substr(2));
 			if (!std::getline(f, line)) {
