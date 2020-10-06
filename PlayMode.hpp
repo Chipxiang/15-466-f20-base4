@@ -69,5 +69,5 @@ struct PlayMode : Mode {
 
 	// the end related
 	float ending_elapsed = 0.0f;
-	float transition_last_sec = 3.0f;
+	float transition_last_sec = 5.0f;
 };
