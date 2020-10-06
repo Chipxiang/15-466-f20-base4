@@ -1,6 +1,6 @@
 1
 "Where am I?"
 You wake up on a cold, dusty floor. 
-Dim, flickering lamplight glows from an old chandlier.
+Dim, flickering lamplight glows from an old chandelier.
 ## 2
 Get up and look around.

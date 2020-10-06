@@ -5,8 +5,8 @@ A chest of drawers is placed between the bed and bookshelf.
 ## 5
 Check the bookshelf.
 ## 6
-Investigate the drawers.
-## 7
 Approach the bed.
+## 7
+Investigate the drawers.
 ## 2
 Go back to center of room.

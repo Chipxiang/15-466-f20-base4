@@ -1,10 +1,12 @@
 4
-The only door is on the east side of the room.
-## 5
-Check the bookshelf.
-## 6
-Investigate the drawers.
-## 7
-Approach the bed.
+The only door of this room is on the east side of the room.
+There is an IBM PC on the desk.
+Next to the PC there's a CD player.
+## 8
+Go to the door.
+## 9
+Look at the PC.
+## 10
+Check the CD player.
 ## 2
 Go back to center of room.

@@ -1,0 +1,7 @@
+5
+The bookshelf is filled of heavy dictionaries and huge novels.
+It might take a centry to read all of them, so you simply flipped
+throught the books quickly.
+Unfortunately, there's no magic clues hidden inside the books.
+## 3
+Go back to west side of room.

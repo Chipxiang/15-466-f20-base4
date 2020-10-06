@@ -50,7 +50,7 @@ struct PlayMode : Mode {
 	void load_text_scenes();
 
 	// secs interval to pop out a char
-	float pop_char_interval = 0.1f;
+	float pop_char_interval = 0.01f;
 
 	// sound effect of typing
 	std::shared_ptr<Sound::PlayingSample> typing_sample;

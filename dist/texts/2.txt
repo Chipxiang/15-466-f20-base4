@@ -1,7 +1,8 @@
 2
 It seems like you are locked inside a cramped room. 
 The atmosphere is filled with dust and unpleasant smell.
-You have no idea why you are here, but you definitely want to get out and get some fresh air.
+You have no idea why you are here, but you definitely want to get out 
+and breathe some fresh air.
 ## 3
 Inspect west side of the room.
 ## 4

@@ -156,7 +156,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 			s->ClearText();
 		}
 
-		int lines_of_desc = std::count(text_scenes[curr_scene].description.begin(),
+		int lines_of_desc = (int)std::count(text_scenes[curr_scene].description.begin(),
 								 text_scenes[curr_scene].description.end(), '\n') + 1;
 		float option_y_anchor = 1.0f - (2.0f / (float)LINE_CNT) * (float)(lines_of_desc + 1);
 		for (int i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
