@@ -1,0 +1,5 @@
+8
+It is a heavy, bank-level security door.
+There's a PIN pad on the side of it.
+## 4
+Go back to the east side of the room.

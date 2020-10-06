@@ -1,0 +1,7 @@
+10
+The CD player is still in good condition. If you had a CD, you could
+enjoy some music. 
+You wouldn't try to escape anymore if you had good music, will you?
+However, you don't have a CD to play.
+## 4
+Go back to the east side of the room.

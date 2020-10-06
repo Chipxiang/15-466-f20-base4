@@ -1,0 +1,8 @@
+7
+You opened the drawers one by one.
+You found a sock in the first drawer.
+You found a candy in the second drawer.
+You found a spider in the third drawer.
+It ran away.
+## 3
+Go back to west side of room.
