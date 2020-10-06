@@ -51,6 +51,9 @@ Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -
 Load< Sound::Sample > load_typing_effect(LoadTagDefault, []() -> Sound::Sample const* {
 		return new Sound::Sample(data_path("musics/typing.opus"));
 	});
+Load< Sound::Sample > load_bgm(LoadTagDefault, []() -> Sound::Sample const* {
+	return new Sound::Sample(data_path("musics/bgm.opus"));
+	});
 
 PlayMode::PlayMode() {
 	FT_Library library;
@@ -89,6 +92,7 @@ PlayMode::PlayMode() {
 	load_text_scenes();
 	curr_choice = 0;
 	curr_scene = 1;
+	bgm_loop = Sound::loop(*load_bgm, 0.25f);
 }
 
 PlayMode::~PlayMode() {

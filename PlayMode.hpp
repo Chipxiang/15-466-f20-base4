@@ -61,6 +61,8 @@ struct PlayMode : Mode {
 	// sound effect of typing
 	std::shared_ptr<Sound::PlayingSample> typing_sample;
 
+	std::shared_ptr<Sound::PlayingSample> bgm_loop;
+
 	// max line count
 	const int LINE_CNT = 10;
 

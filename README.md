@@ -24,10 +24,7 @@ Make bed: https://freesound.org/people/Iamgiorgio/sounds/371308/
 Flip book: https://freesound.org/people/Tats14/sounds/408786/
 Lock open: https://freesound.org/people/fastson/sounds/399120/
 Read disk: https://freesound.org/people/Anika11/sounds/325686/
-<<<<<<< HEAD
-Dizzy: https://freesound.org/people/Robinhood76/sounds/126867/
-=======
+Wake up: https://freesound.org/people/vanishedillusion/sounds/500618/
 Drawer: https://freesound.org/people/cMilan/sounds/426769/
->>>>>>> 3aa51d924d70bc5f7f889d72491b1368f4285013
-
+BGM: https://freepd.com/music/Halloween%20Theme%201.mp3
 This game was built with [NEST](NEST.md).

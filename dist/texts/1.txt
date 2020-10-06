@@ -1,8 +1,10 @@
 1
+"............................Wake..........................up........................................"
+"............................Wake..........................up........................................"
 "Where...where...am I...?"
 You wake up on a cold, dusty floor. 
 Dim, flickering lamplight glows from an old chandelier.
 ## 2
 Get up and look around.
 && 0
-dizzy
+wake-up
