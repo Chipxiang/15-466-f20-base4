@@ -99,7 +99,6 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 	// Reference https://github.com/Dmcdominic/15-466-f20-game4/blob/menu-mode/MenuMode.cpp
 	if (!text_scenes[curr_scene].choice_descriptions.empty() &&
 			text_scenes[curr_scene].description.size() == text_scenes[curr_scene].visible_desc.size()) {
-		// only response key board after showing all scene description
 		if (evt.type == SDL_KEYDOWN) {
 			if (evt.key.keysym.sym == SDLK_DOWN) {
 				curr_choice += 1;
@@ -113,6 +112,10 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 				return true;
 			}
 			else if (evt.key.keysym.sym == SDLK_SPACE) {
+//				if(text_scenes[curr_scene].description.size() != text_scenes[curr_scene].visible_desc.size()) {
+//					text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description;
+//					return false;
+//				}
 				text_scenes[curr_scene].elapsed = 0.0f;//reset
 				text_scenes[curr_scene].visible_desc.clear();//reset
 				std::map<int, bool>::iterator it;
@@ -163,6 +166,7 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 				}
 			}
 			else if (curr_scene == 8 && evt.key.keysym.sym >= 48 && evt.key.keysym.sym <= 57) {
+				Sound::play((*sound_samples).at("door_pin_single_press"), 0.4f);
 				if (text_scenes[curr_scene].description.find("-") != std::string::npos) {
 					text_scenes[curr_scene].description[text_scenes[curr_scene].description.find("-")] = (char)(evt.key.keysym.sym - 48 + '0');
 				}
@@ -180,7 +184,7 @@ void PlayMode::update(float elapsed) {
 		auto cur_len = (uint32_t)text_scenes[curr_scene].visible_desc.size();
 //		std::cout<<"cur_len="<<cur_len<<std::endl;
 		if (!typing_sample && cur_len == 0) {
-			typing_sample = Sound::loop(*load_typing_effect, 1.0f);
+			typing_sample = Sound::loop(*load_typing_effect, 0.3f);
 		}
 
 		if (typing_sample && cur_len == (uint32_t)text_scenes[curr_scene].description.size()) {
@@ -189,7 +193,10 @@ void PlayMode::update(float elapsed) {
 		}
 
 		text_scenes[curr_scene].elapsed += elapsed;
-		int char_size = (int)(text_scenes[curr_scene].elapsed / pop_char_interval);
+
+		int char_size = std::max((int)(text_scenes[curr_scene].elapsed / pop_char_interval),
+						   (int)text_scenes[curr_scene].visible_desc.size());
+
 		text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description.substr(0, char_size);
 		if (text_scenes[curr_scene].sounds.find((int)text_scenes[curr_scene].visible_desc.size()) != text_scenes[curr_scene].sounds.end()) {
 			if (!text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()]) {

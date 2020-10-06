@@ -56,7 +56,7 @@ struct PlayMode : Mode {
 	const std::string door_original = "-----";
 
 	// secs interval to pop out a char
-	float pop_char_interval = 0.01f;
+	float pop_char_interval = 0.03f;
 
 	// sound effect of typing
 	std::shared_ptr<Sound::PlayingSample> typing_sample;

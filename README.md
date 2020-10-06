@@ -24,5 +24,6 @@ Make bed: https://freesound.org/people/Iamgiorgio/sounds/371308/
 Flip book: https://freesound.org/people/Tats14/sounds/408786/
 Lock open: https://freesound.org/people/fastson/sounds/399120/
 Read disk: https://freesound.org/people/Anika11/sounds/325686/
+Dizzy: https://freesound.org/people/Robinhood76/sounds/126867/
 
 This game was built with [NEST](NEST.md).

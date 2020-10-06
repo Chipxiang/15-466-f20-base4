@@ -1,6 +1,6 @@
 2
 It seems like you are locked inside a cramped room. 
-The atmosphere is filled with dust and unpleasant smell.
+The air is filled with dust and unpleasant smell.
 You have no idea why you are here, but you definitely want to get out 
 and breathe some fresh air.
 ## 3

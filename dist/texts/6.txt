@@ -7,3 +7,5 @@ You lift the quilt to check out.
 There's a 1:1 Super Mario doll holding a CD in his hand.
 ## 3
 Fetch the CD and go back.
+&& 200
+bed-making

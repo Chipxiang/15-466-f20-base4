@@ -1,8 +1,8 @@
 1
-"Where am I?"
+"Where...where...am I...?"
 You wake up on a cold, dusty floor. 
 Dim, flickering lamplight glows from an old chandelier.
 ## 2
 Get up and look around.
-&& 5
-walk
+&& 0
+dizzy
