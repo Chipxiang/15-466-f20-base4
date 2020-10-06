@@ -54,6 +54,9 @@ Load< Sound::Sample > load_typing_effect(LoadTagDefault, []() -> Sound::Sample c
 Load< Sound::Sample > load_bgm(LoadTagDefault, []() -> Sound::Sample const* {
 	return new Sound::Sample(data_path("musics/bgm.opus"));
 	});
+Load< Sound::Sample > load_game_end(LoadTagDefault, []() -> Sound::Sample const* {
+	return new Sound::Sample(data_path("musics/game-end.opus"));
+	});
 
 PlayMode::PlayMode() {
 	FT_Library library;
@@ -88,7 +91,7 @@ PlayMode::PlayMode() {
 	load_text_scenes();
 	curr_choice = 0;
 	curr_scene = 1;
-	bgm_loop = Sound::loop(*load_bgm, 0.25f);
+	bgm_loop = Sound::loop(*load_bgm, 0.2f);
 }
 
 PlayMode::~PlayMode() {
@@ -157,6 +160,10 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 				curr_choice = 0;
 				if (curr_scene == 6) {
 					have_cd = true;
+				}
+				if (curr_scene == 15) {
+					bgm_loop->stop();
+					Sound::loop(*load_game_end, 0.2f);
 				}
 				std::cout << "Current Scene" << curr_scene << std::endl;
 			}
