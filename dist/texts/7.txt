@@ -4,5 +4,6 @@ You found a sock in the first drawer.
 You found a candy in the second drawer.
 You found a spider in the third drawer.
 It ran away.
+The fourth drawer is locked.
 ## 3
 Go back to west side of room.
