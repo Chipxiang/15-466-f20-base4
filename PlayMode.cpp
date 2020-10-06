@@ -120,13 +120,13 @@ void PlayMode::update(float elapsed) {
 	{
 		// update scene description word
 		// check if needs to play sound
-		uint32_t cur_len = text_scenes[curr_scene].visible_desc.size();
+		auto cur_len = (uint32_t)text_scenes[curr_scene].visible_desc.size();
 //		std::cout<<"cur_len="<<cur_len<<std::endl;
 		if (!typing_sample && cur_len == 0) {
 			typing_sample = Sound::loop(*load_typing_effect, 1.0f);
 		}
 
-		if (typing_sample && cur_len == text_scenes[curr_scene].description.size()) {
+		if (typing_sample && cur_len == (uint32_t)text_scenes[curr_scene].description.size()) {
 			typing_sample->stop();
 			typing_sample = nullptr;
 		}

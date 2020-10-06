@@ -69,7 +69,7 @@ if $(OS) = NT { #Windows
 	NEST_LIBS = ../nest-libs/linux ;
 	C++ = g++ -no-pie ;
 	C++FLAGS =
-		-std=c++17 -g -Wall -Werror -lstdc++fs
+		-std=c++17 -g -Wall -Werror
 		`'$(NEST_LIBS)/SDL2/bin/sdl2-config' --prefix='$(NEST_LIBS)/SDL2' --cflags` #SDL2
 		-I$(NEST_LIBS)/glm/include                                                  #glm
 		-I$(NEST_LIBS)/libpng/include                                               #libpng
@@ -79,7 +79,7 @@ if $(OS) = NT { #Windows
 		-I$(NEST_LIBS)/freetype/include                                             #freetype
 		-I$(NEST_LIBS)/harfbuzz/include                                             #harfbuzz
 		;
-	LINK = g++ -no-pie ;
+	LINK = g++ -no-pie -lstdc++fs;
 	LINKFLAGS = -std=c++17 -g -Wall -Werror ;
 	LINKLIBS =
 		`'$(NEST_LIBS)/SDL2/bin/sdl2-config' --prefix='$(NEST_LIBS)/SDL2' --static-libs` -lGL #SDL2
