@@ -15,7 +15,7 @@ Load<void> load_index_buffer(LoadTagEarly, [](){
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), index_buffer_content, GL_STATIC_DRAW);
 });
 
-Sentence::Sentence(FT_Library& library, const char* font_path) {
+Sentence::Sentence(FT_Library& library, const char* font_path, int l_height): line_height_(l_height){
 	FT_Error error;
 
 	error = FT_New_Face(library, font_path, 0, &face_);
@@ -32,7 +32,7 @@ Sentence::Sentence(FT_Library& library, const char* font_path) {
 }
 
 
-Sentence::Sentence(FT_Face face) {
+Sentence::Sentence(FT_Face face,  int l_height): line_height_(l_height) {
 	face_ = face;
 	if (!face_) {
 		throw std::runtime_error("Wrong font!");
@@ -40,35 +40,49 @@ Sentence::Sentence(FT_Face face) {
 }
 
 
-void Sentence::Draw(const glm::uvec2& drawable_size) {
+void Sentence::Draw(const glm::uvec2& window_size) {
 	if(!buf_ || !font_) {
 		return;
 	}
 	glUseProgram(texture2d_program->program);
 
-	float cursor_x = GetPixelPos(anchor_.x, drawable_size.x), cursor_y = GetPixelPos(anchor_.y, drawable_size.y);
+	// in real pixel, top left is (0, 0)
+	float cursor_x = (anchor_.x + 1.0f) * window_size.x / 2.0f;
+	float cursor_y = (anchor_.y + 1.0f) * window_size.y / 2.0f;
+	int line_cnt = 0;
+
 	FT_GlyphSlot slot = face_->glyph;
 
 	for (unsigned int i = 0; i < glyph_count_; ++i) {
+		if(text_[i] == '\n') {
+			line_cnt++;
+			cursor_x = (anchor_.x + 1.0f) * window_size.x / 2.0f;
+			cursor_y = (anchor_.y + 1.0f) * window_size.y / 2.0f - (float)(line_cnt * line_height_);
+			continue;
+		}
+
 		auto glyphid = glyph_info_[i].codepoint;
-		auto x_offset = glyph_pos_[i].x_offset / 64.0f;
-		auto y_offset = glyph_pos_[i].y_offset / 64.0f;
+//		auto x_offset = glyph_pos_[i].x_offset / 64.0f;
+//		auto y_offset = glyph_pos_[i].y_offset / 64.0f;
 		auto x_advance = glyph_pos_[i].x_advance / 64.0f;
 		auto y_advance = glyph_pos_[i].y_advance / 64.0f;
-
 
 		FT_Error error = FT_Load_Char(face_, text_[i], FT_LOAD_RENDER);
 		if (error) {
 			printf("%d\n", glyphid);
 			continue;
 		}
+//		std::cout<<text_[i]<<" x_offset="<<x_offset<<" y_offset="<<y_offset<<" x_advance="<<x_advance
+//		         <<" y_advance="<<y_advance<<" slot->bitmap_top="<<slot->bitmap_top<<
+//		         " slot->bitmap_left="<<slot->bitmap_left<<"\n";
+
 
 		auto& bitmap = slot->bitmap;
 
-		float start_x = GetOpenGLPos(cursor_x + x_offset, drawable_size.x);
-		float start_y = GetOpenGLPos(cursor_y + y_offset, drawable_size.y);
-		float end_x = start_x + bitmap.width * 2.0f / drawable_size.x;
-		float end_y = start_y + bitmap.rows * 2.0f / drawable_size.y;
+		float start_x = 2 * (cursor_x + slot->bitmap_left) / window_size.x - 1;
+		float start_y = 2 * (cursor_y - bitmap.rows + slot->bitmap_top) / window_size.y - 1;
+		float end_x = start_x + bitmap.width * 2.0f / window_size.x;
+		float end_y = start_y + bitmap.rows * 2.0f / window_size.y;
 
 		Texture2DProgram::Vertex vertexes[] {
 			{{start_x, start_y}, color_, {0, 1}},
@@ -125,7 +139,6 @@ Sentence::~Sentence()
 	ClearText();
 }
 
-// pos: OpenGL position (-1, 1)
 void Sentence::SetText(const char* text, FT_F26Dot6 size, glm::u8vec4 color, const glm::vec2& anchor) {
 	ClearText();
 	anchor_ = anchor;
@@ -162,7 +175,6 @@ void Sentence::SetText(const char* text, FT_F26Dot6 size, glm::u8vec4 color, con
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 		glGenTextures(1, &texture_id);
 		glBindTexture(GL_TEXTURE_2D, texture_id);
-
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

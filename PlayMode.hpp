@@ -18,12 +18,12 @@ struct PlayMode : Mode {
 	//functions called by main loop:
 	virtual bool handle_event(SDL_Event const &, glm::uvec2 const &window_size) override;
 	virtual void update(float elapsed) override;
-	virtual void draw(glm::uvec2 const &drawable_size) override;
+	virtual void draw(glm::uvec2 const &window_size) override;
 
 	float total_elapsed = 0.0f;
 	FT_Library library;
-	FT_Face test_face;
-	FT_Face test_face2;
+	FT_Face desc_face;
+	FT_Face option_face;
 
 	Sentence* drawFont_p;
 	Sentence* scene_sen = nullptr;
@@ -52,5 +52,14 @@ struct PlayMode : Mode {
 	// secs interval to pop out a char
 	float pop_char_interval = 0.1f;
 
+	// sound effect of typing
 	std::shared_ptr<Sound::PlayingSample> typing_sample;
+
+	// max line count
+	const int LINE_CNT = 10;
+
+	// color used for game
+	glm::u8vec4 option_select_color = glm::u8vec4(0xff, 0x00, 0x00, 0xff);
+	glm::u8vec4 option_unselect_color = glm::u8vec4(0xff, 0x00, 0x00, 0x22);
+	glm::u8vec4 scene_desc_color = glm::u8vec4(0x00, 0x00, 0xff, 0xff);
 };

@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		1280, 720, //TODO: modify window size if you'd like
 		SDL_WINDOW_OPENGL
-		| SDL_WINDOW_RESIZABLE //uncomment to allow resizing
+//		| SDL_WINDOW_RESIZABLE //uncomment to allow resizing
 		| SDL_WINDOW_ALLOW_HIGHDPI //uncomment for full resolution on high-DPI screens
 	);
 
@@ -171,7 +171,7 @@ int main(int argc, char **argv) {
 
 		{ //(3) call the current mode's "draw" function to produce output:
 		
-			Mode::current->draw(drawable_size);
+			Mode::current->draw(window_size);
 		}
 
 		//Wait until the recently-drawn frame is shown before doing it all again:
