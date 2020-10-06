@@ -27,4 +27,5 @@ Read disk: https://freesound.org/people/Anika11/sounds/325686/
 Wake up: https://freesound.org/people/vanishedillusion/sounds/500618/
 Drawer: https://freesound.org/people/cMilan/sounds/426769/
 BGM: https://freepd.com/music/Halloween%20Theme%201.mp3
+Game end: https://freepd.com/music/City%20Sunshine.mp3
 This game was built with [NEST](NEST.md).
