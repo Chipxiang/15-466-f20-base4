@@ -77,10 +77,6 @@ PlayMode::PlayMode() {
 		throw std::runtime_error("Wrong font!");
 	}
 
-//	drawFont_p = new Sentence(desc_face, 720 / LINE_CNT);
-//	drawFont_p->SetText("abcdefghijklmnopqrstuvwxyz\nabcdefghijklmnopqrstuvwxyz\n3\n4\n5\n6\n7\n8\n9\n10", 5000, glm::u8vec4(0x0, 0x0, 0xff, 0xff), glm::vec2(-1.0f, 0.9f));
-//	drawFont_p->Draw(glm::vec2(1280, 720));
-
 	scene_sen = new Sentence(desc_face, 720 / LINE_CNT); // hard code height of each line
 	for(int i=0; i<5; i++) {
 		option_sens.emplace_back(new Sentence(option_face, 720 / LINE_CNT));
@@ -221,7 +217,6 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
 
-	/*scene.draw(*camera);*/
 	// Reference: https://github.com/Dmcdominic/15-466-f20-game4/blob/menu-mode/MenuMode.cpp
 	{ //use DrawLines to overlay some text:
 		glDisable(GL_DEPTH_TEST);
@@ -254,8 +249,6 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 				s->Draw(window_size);
 			}
 		}
-
-//		drawFont_p->Draw(window_size);
 	}
 }
 

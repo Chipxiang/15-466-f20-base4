@@ -25,14 +25,10 @@ struct PlayMode : Mode {
 	FT_Face desc_face;
 	FT_Face option_face;
 
-	Sentence* drawFont_p;
 	Sentence* scene_sen = nullptr;
 	std::vector<Sentence*> option_sens;
 
 	//music coming from the tip of the leg (as a demonstration):
-
-	//camera:
-	Scene::Camera *camera = nullptr;
 
 	struct TextScene {
 		int id;
