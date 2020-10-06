@@ -1,8 +1,8 @@
 14
 You tried to open the fourth drawers again.
-Unlocked!
+The drawer is unlocked.
 You found a piece of paper inside.
-There's number on it:
+There's a number on it:
 15666
 ## 3
 Go back to west side of room.

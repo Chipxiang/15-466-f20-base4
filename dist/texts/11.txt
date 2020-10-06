@@ -1,10 +1,14 @@
 11
 The CD player is still in good condition. If you have a CD, you can
-enjoy some music. 
+enjoy some music.
 You recalled that CD found on the bed.
 You inserted the CD to the player.
-Press R to play the music.
+The CD is successfully read by the player.
+The player started to play a short piece of music.
+(Press R to replay the music)
 ## 4
 Go back to the east side of the room.
 && 126
 read-disk
+&& 250
+code

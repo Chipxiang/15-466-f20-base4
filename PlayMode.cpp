@@ -151,6 +151,12 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 				if (pc_unlock && text_scenes[curr_scene].next_scene[curr_choice] == 7) {
 					text_scenes[curr_scene].next_scene[curr_choice] = 14;
 				}
+				if (text_scenes[curr_scene].next_scene[curr_choice] == 11) {
+					bgm_loop->stop();
+				}
+				if (curr_scene == 11) {
+					bgm_loop = Sound::loop(*load_bgm, 0.15f);
+				}
 				curr_scene = text_scenes[curr_scene].next_scene[curr_choice];
 				curr_choice = 0;
 				if (curr_scene == 6) {
@@ -336,10 +342,11 @@ void PlayMode::load_text_scenes() {
 			int start_pos = std::stoi(line.substr(2));
 			if (!std::getline(f, line)) {
 				std::cout << "Music not specified!" << std::endl;
-				continue;
+				break;
 			}
 			ts.sounds[start_pos] = line;
 			ts.played[start_pos] = false;
+			std::getline(f, line);
 		}
 		text_scenes[id] = ts;
 		text_scenes[id].elapsed = 0.0f; // init timer
