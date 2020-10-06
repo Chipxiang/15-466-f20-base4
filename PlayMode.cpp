@@ -41,7 +41,6 @@ Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -
 			size_t end = file_name.find(".opus");
 
 			if(end != std::string::npos) {
-				std::cout << file_name.substr(start, end) << std::endl;
 				map_p->emplace(file_name.substr(start, end), Sound::Sample(path_string));
 			}
 		}
@@ -115,10 +114,6 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 				return true;
 			}
 			else if (evt.key.keysym.sym == SDLK_SPACE) {
-//				if(text_scenes[curr_scene].description.size() != text_scenes[curr_scene].visible_desc.size()) {
-//					text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description;
-//					return false;
-//				}
 				text_scenes[curr_scene].elapsed = 0.0f;//reset
 				text_scenes[curr_scene].visible_desc.clear();//reset
 				std::map<int, bool>::iterator it;
@@ -165,7 +160,6 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 					bgm_loop->stop();
 					Sound::loop(*load_game_end, 0.2f);
 				}
-				std::cout << "Current Scene" << curr_scene << std::endl;
 			}
 			else if (curr_scene == 9 && evt.key.keysym.sym >= 97 && evt.key.keysym.sym <= 122) {
 				Sound::play((*sound_samples).at("key_single_press"), 0.4f);
@@ -196,7 +190,6 @@ void PlayMode::update(float elapsed) {
 		// update scene description word
 		// check if needs to play sound
 		auto cur_len = (uint32_t)text_scenes[curr_scene].visible_desc.size();
-//		std::cout<<"cur_len="<<cur_len<<std::endl;
 		if (!typing_sample && cur_len == 0) {
 			typing_sample = Sound::loop(*load_typing_effect, 0.3f);
 		}
@@ -213,7 +206,6 @@ void PlayMode::update(float elapsed) {
 
 		text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description.substr(0, char_size);
 		if (text_scenes[curr_scene].sounds.find((int)text_scenes[curr_scene].visible_desc.size()) != text_scenes[curr_scene].sounds.end()) {
-			std::cout << "Play sound " << text_scenes[curr_scene].sounds[(int)text_scenes[curr_scene].visible_desc.size()] << std::endl;
 			if (!text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()]) {
 				Sound::play((*sound_samples).at(text_scenes[curr_scene].sounds[(int)text_scenes[curr_scene].visible_desc.size()]));
 				text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()] = true;
@@ -305,7 +297,6 @@ void PlayMode::load_text_scenes() {
 	while ((entry = readdir(dp))) {
 		std::string txt_path = base_dir + "/" + std::string(entry->d_name);
 #endif
-		std::cout << txt_path << std::endl;
 		std::ifstream f(txt_path);
 		std::string line;
 		if (!f.is_open()) {
@@ -359,13 +350,4 @@ void PlayMode::load_text_scenes() {
 #else
 	closedir(dp);
 #endif
-
-	std::map<int, TextScene>::iterator it;
-	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
-		//		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
-		for (uint32_t i = 0; i < it->second.next_scene.size(); i++) {
-			//			std::cout << "Choice: " << it->second.next_scene[i] << std::endl;
-			//			std::cout << "Description: " << it->second.choice_descriptions[i] << std::endl;
-		}
-	}
 }
