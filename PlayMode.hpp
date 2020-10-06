@@ -39,7 +39,8 @@ struct PlayMode : Mode {
 		std::string description;
 		std::vector<std::string> choice_descriptions;
 		std::vector<int> next_scene;
-
+		std::map<int, std::string> sounds;
+		std::map<int, bool> played;
 		float elapsed; // used for text animation
 		std::string visible_desc;
 	};
