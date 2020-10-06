@@ -5,5 +5,5 @@ It's a sunny warm day outside, and COVID is already eliminated.
 You will have a great time having fun outside.
 Thanks for playing.
 THE END
-&& 1
+&& 5
 lock-open
