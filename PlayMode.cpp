@@ -90,7 +90,7 @@ PlayMode::PlayMode() {
 	load_text_scenes();
 	curr_choice = 0;
 	curr_scene = 1;
-	bgm_loop = Sound::loop(*load_bgm, 0.2f);
+	bgm_loop = Sound::loop(*load_bgm, 0.15f);
 }
 
 PlayMode::~PlayMode() {

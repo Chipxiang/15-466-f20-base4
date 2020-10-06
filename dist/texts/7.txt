@@ -9,3 +9,7 @@ The fourth drawer is locked.
 Go back to west side of room.
 && 36
 drawer-open
+&& 76
+drawer-open
+&& 106
+drawer-open

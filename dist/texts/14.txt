@@ -1,13 +1,10 @@
 14
-You opened the drawers one by one.
-You found a sock in the first drawer.
-You found a candy in the second drawer.
-You found a spider in the third drawer.
-It ran away.
-You found a piece of paper in the fourth drawer.
+You tried to open the fourth drawers again.
+Unlocked!
+You found a piece of paper inside.
 There's number on it:
 15666
 ## 3
 Go back to west side of room.
-&& 36
+&& 28
 drawer-open
