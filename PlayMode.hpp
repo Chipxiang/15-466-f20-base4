@@ -61,7 +61,7 @@ struct PlayMode : Mode {
 	const int LINE_CNT = 10;
 
 	// color used for game
-	glm::u8vec4 option_select_color = glm::u8vec4(0xff, 0x00, 0x00, 0xff);
-	glm::u8vec4 option_unselect_color = glm::u8vec4(0xff, 0x00, 0x00, 0x22);
-	glm::u8vec4 scene_desc_color = glm::u8vec4(0x00, 0x00, 0xff, 0xff);
+	glm::u8vec4 option_select_color = glm::u8vec4(0xBD, 0xFC, 0xC9, 0xff);
+	glm::u8vec4 option_unselect_color = glm::u8vec4(0xc0, 0xc0, 0xc0, 0x55);
+	glm::u8vec4 scene_desc_color = glm::u8vec4(0xff, 0xff, 0xff, 0xff);
 };

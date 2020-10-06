@@ -215,7 +215,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -230,7 +230,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 		scene_sen->ClearText();
 		float scene_y_anchor = 1.0f - 2.0f / (float)LINE_CNT;
 		scene_sen->SetText(&(text_scenes[curr_scene].visible_desc[0]), 4000,
-		                   scene_desc_color,glm::vec2(-1.0f, scene_y_anchor));
+		                   scene_desc_color,glm::vec2(-0.96f, scene_y_anchor));
 
 		for (auto s : option_sens) {
 			s->ClearText();
@@ -243,7 +243,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 			glm::u8vec4 color = (int)i == curr_choice ? option_select_color : option_unselect_color;
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
-			                        3000, color, glm::vec2(-1.0f, option_y_anchor));
+			                        3000, color, glm::vec2(-0.96f, option_y_anchor));
 			option_y_anchor -= (2.0f / (float)LINE_CNT) / 2.0f;
 		}
 
