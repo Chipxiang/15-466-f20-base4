@@ -171,6 +171,12 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 					text_scenes[curr_scene].description[text_scenes[curr_scene].description.find("-")] = (char)(evt.key.keysym.sym - 48 + '0');
 				}
 			}
+			else if (curr_scene == 11 && evt.key.keysym.sym == SDLK_r) {
+				Sound::play((*sound_samples).at("code"), 1.0f);
+				if (text_scenes[curr_scene].description.find("-") != std::string::npos) {
+					text_scenes[curr_scene].description[text_scenes[curr_scene].description.find("-")] = (char)(evt.key.keysym.sym - 48 + '0');
+				}
+			}
 		}
 	}
 
