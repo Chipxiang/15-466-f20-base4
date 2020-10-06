@@ -1,8 +1,6 @@
 1
-This is scene number 1
+"Where am I?"
+You wake up on a cold, dusty floor. 
+Dim, flickering lamplight glows from an old chandlier.
 ## 2
-Go to scene number 2
-## 3
-Go to scene number 3
-&& 7
-walk
+Get up and look around.
