@@ -9,27 +9,31 @@
 #include "data_path.hpp"
 #include "Sound.hpp"
 
+#if defined(_WIN32)
+#include <filesystem>
+#else
 #include <dirent.h>
+#endif
 
 
 Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -> std::map<std::string, Sound::Sample> const* {
 		auto map_p = new std::map<std::string, Sound::Sample>();
 		std::string base_dir = data_path("musics");
 
-		struct dirent *entry;
-		DIR *dp;
-
-		dp = opendir(&base_dir[0]);
-		if (dp == nullptr) {
-			std::cout<<"Cannot open "<<base_dir<<"\n";
-			throw std::runtime_error("Cannot open dir");
-		}
-		std::cout<<base_dir<<std::endl;
-		while ((entry = readdir(dp))) {
 #if defined(_WIN32)
-	std::string path_string = base_dir + "\\" + std::string(entry->d_name);
+	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
+		std::string path_string = entry.path().filename().string();
 #else
-	std::string path_string = base_dir + "/" + std::string(entry->d_name);
+	struct dirent *entry;
+	DIR *dp;
+
+	dp = opendir(&base_dir[0]);
+	if (dp == nullptr) {
+		std::cout<<"Cannot open "<<base_dir<<"\n";
+		throw std::runtime_error("Cannot open dir");
+	}
+	while ((entry = readdir(dp))) {
+		std::string path_string = base_dir + "/" + std::string(entry->d_name);
 #endif
 			size_t start = 0;
 			size_t end = path_string.find(".opus");
@@ -204,6 +208,11 @@ void PlayMode::load_text_scenes() {
 	// From https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
 	std::string base_dir = data_path("texts");
 
+
+#if defined(_WIN32)
+	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
+		std::string txt_path = entry.path().filename().string();
+#else
 	struct dirent *entry;
 	DIR *dp;
 
@@ -212,11 +221,7 @@ void PlayMode::load_text_scenes() {
 		std::cout<<"Cannot open "<<base_dir<<"\n";
 		throw std::runtime_error("Cannot open dir");
 	}
-	std::cout<<base_dir<<std::endl;
 	while ((entry = readdir(dp))) {
-#if defined(_WIN32)
-		std::string txt_path = base_dir + "\\" + std::string(entry->d_name);
-#else
 		std::string txt_path = base_dir + "/" + std::string(entry->d_name);
 #endif
 		std::cout << txt_path << std::endl;
@@ -266,7 +271,11 @@ void PlayMode::load_text_scenes() {
 		text_scenes[id].elapsed = 0.0f; // init timer
 		f.close();
 	}
+
+#if defined(_WIN32)
+#else
 	closedir(dp);
+#endif
 
 	std::map<int, TextScene>::iterator it;
 	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
