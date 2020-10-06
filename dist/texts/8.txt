@@ -1,7 +1,7 @@
 8
 It is a heavy, bank level security door.
 There's a PIN pad on the side of it.
------
+PIN: -----
 The PIN will be automatically reset upon wrong input.
 ## 8
 Enter
