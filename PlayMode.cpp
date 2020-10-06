@@ -6,21 +6,42 @@
 #include FT_FREETYPE_H
 
 #include <fstream>
-#include <filesystem>
 #include "data_path.hpp"
 #include "Sound.hpp"
 
+#if defined(_WIN32)
+#include <filesystem>
+#else
+#include <dirent.h>
+#endif
 
-// From https://github.com/wrystal/CrazyDriver
+
 Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -> std::map<std::string, Sound::Sample> const* {
 		auto map_p = new std::map<std::string, Sound::Sample>();
-		std::string path = data_path("musics");
-		for (const auto& entry : std::filesystem::directory_iterator(path)) {
-			std::string path_string = entry.path().filename().string();
+		std::string base_dir = data_path("musics");
+
+#if defined(_WIN32)
+	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
+		std::string path_string = entry.path().filename().string();
+#else
+	struct dirent *entry;
+	DIR *dp;
+
+	dp = opendir(&base_dir[0]);
+	if (dp == nullptr) {
+		std::cout<<"Cannot open "<<base_dir<<"\n";
+		throw std::runtime_error("Cannot open dir");
+	}
+	while ((entry = readdir(dp))) {
+		std::string path_string = base_dir + "/" + std::string(entry->d_name);
+#endif
 			size_t start = 0;
 			size_t end = path_string.find(".opus");
-			std::cout << path_string.substr(start, end) << std::endl;
-			map_p->emplace(path_string.substr(start, end), Sound::Sample(entry.path().string()));
+
+			if(end != std::string::npos) {
+				std::cout << path_string.substr(start, end) << std::endl;
+				map_p->emplace(path_string.substr(start, end), Sound::Sample(path_string));
+			}
 		}
 		return map_p;
 	});
@@ -154,13 +175,13 @@ void PlayMode::update(float elapsed) {
 	{
 		// update scene description word
 		// check if needs to play sound
-		int cur_len = (int)text_scenes[curr_scene].visible_desc.size();
+		auto cur_len = (uint32_t)text_scenes[curr_scene].visible_desc.size();
 //		std::cout<<"cur_len="<<cur_len<<std::endl;
 		if (!typing_sample && cur_len == 0) {
 			typing_sample = Sound::loop(*load_typing_effect, 1.0f);
 		}
 
-		if (typing_sample && cur_len == text_scenes[curr_scene].description.size()) {
+		if (typing_sample && cur_len == (uint32_t)text_scenes[curr_scene].description.size()) {
 			typing_sample->stop();
 			typing_sample = nullptr;
 		}
@@ -206,8 +227,8 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 		int lines_of_desc = (int)std::count(text_scenes[curr_scene].description.begin(),
 								 text_scenes[curr_scene].description.end(), '\n') + 1;
 		float option_y_anchor = 1.0f - (2.0f / (float)LINE_CNT) * (float)(lines_of_desc + 1);
-		for (int i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
-			glm::u8vec4 color = i == curr_choice ? option_select_color : option_unselect_color;
+		for (uint32_t i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
+			glm::u8vec4 color = (int)i == curr_choice ? option_select_color : option_unselect_color;
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
 			                        3000, color, glm::vec2(-1.0f, option_y_anchor));
@@ -230,17 +251,33 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 
 void PlayMode::load_text_scenes() {
 	// From https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
-	std::string path = data_path("texts");
-	for (const auto& entry : std::filesystem::directory_iterator(path)) {
-		std::cout << entry.path() << std::endl;
-		std::ifstream f(entry.path());
+	std::string base_dir = data_path("texts");
+
+
+#if defined(_WIN32)
+	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
+		std::string txt_path = entry.path().filename().string();
+#else
+	struct dirent *entry;
+	DIR *dp;
+
+	dp = opendir(&base_dir[0]);
+	if (dp == nullptr) {
+		std::cout<<"Cannot open "<<base_dir<<"\n";
+		throw std::runtime_error("Cannot open dir");
+	}
+	while ((entry = readdir(dp))) {
+		std::string txt_path = base_dir + "/" + std::string(entry->d_name);
+#endif
+		std::cout << txt_path << std::endl;
+		std::ifstream f(txt_path);
 		std::string line;
 		if (!f.is_open()) {
-			std::cout << "Unable to open file " << entry.path() << std::endl;
+			std::cout << "Unable to open file " << txt_path << std::endl;
 			continue;
 		}
 		if (!std::getline(f, line)) {
-			std::cout << entry.path() << " is an empty file! Skipped." << std::endl;
+			std::cout << txt_path << " is an empty file! Skipped." << std::endl;
 			continue;
 		}
 		int id = std::stoi(line);
@@ -279,10 +316,16 @@ void PlayMode::load_text_scenes() {
 		text_scenes[id].elapsed = 0.0f; // init timer
 		f.close();
 	}
+
+#if defined(_WIN32)
+#else
+	closedir(dp);
+#endif
+
 	std::map<int, TextScene>::iterator it;
 	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
 		//		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
-		for (int i = 0; i < it->second.next_scene.size(); i++) {
+		for (uint32_t i = 0; i < it->second.next_scene.size(); i++) {
 			//			std::cout << "Choice: " << it->second.next_scene[i] << std::endl;
 			//			std::cout << "Description: " << it->second.choice_descriptions[i] << std::endl;
 		}
