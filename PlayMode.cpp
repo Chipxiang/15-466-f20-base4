@@ -25,31 +25,36 @@ Load< Sound::Sample > load_typing_effect(LoadTagDefault, []() -> Sound::Sample c
 
 PlayMode::PlayMode() {
 	FT_Library library;
-	FT_Error error = FT_Init_FreeType(&library);
-	if (error) {
+	FT_Error error_lib = FT_Init_FreeType(&library);
+	if (error_lib) {
 		std::cout << "Init library failed." << std::endl;
 	}
-	std::string k_font_path_str = data_path("ReallyFree-ALwl7.ttf");
-	const char* kFontPath = k_font_path_str.c_str();
-	error = FT_New_Face(library, kFontPath, 0, &test_face);
-	FT_New_Face(library, kFontPath, 0, &test_face2);
+	std::string desc_font_path = data_path("ReallyFree-ALwl7.ttf");
+	FT_Error error_1 = FT_New_Face(library, &(desc_font_path[0]), 0, &desc_face);
 
-	if (error == FT_Err_Unknown_File_Format) {
-		throw std::runtime_error("The font file could be opened and read, but it appears that its font format is unsupported!");
-	} else if (error) {
-		throw std::runtime_error("The font file could not be opened or read, or that it is broken!");
+	if (error_1) {
+		std::cout<<"Error code: "<<error_1<<std::endl;
+		throw std::runtime_error("Cannot open font file");
 	}
 
-	if (!test_face) {
+	FT_Error error_2 = FT_New_Face(library, &(desc_font_path[0]), 0, &option_face);
+	if (error_2) {
+		std::cout<<"Error code: "<<error_2<<std::endl;
+		throw std::runtime_error("Cannot open font file");
+	}
+
+	if (!desc_face || !option_face) {
 		throw std::runtime_error("Wrong font!");
 	}
 
-	drawFont_p = new Sentence(test_face);
-	drawFont_p->SetText("XXX", 5000, glm::u8vec4(0x0, 0x0, 0xff, 0xff), glm::vec2(0.0f, 0.0f));
-	scene_sen = new Sentence(test_face);
+//	drawFont_p = new Sentence(desc_face, 720 / LINE_CNT);
+//	drawFont_p->SetText("abcdefghijklmnopqrstuvwxyz\nabcdefghijklmnopqrstuvwxyz\n3\n4\n5\n6\n7\n8\n9\n10", 5000, glm::u8vec4(0x0, 0x0, 0xff, 0xff), glm::vec2(-1.0f, 0.9f));
+//	drawFont_p->Draw(glm::vec2(1280, 720));
 
+
+	scene_sen = new Sentence(desc_face, 720 / LINE_CNT); // hard code height of each line
 	for(int i=0; i<5; i++) {
-		option_sens.emplace_back(new Sentence(test_face2));
+		option_sens.emplace_back(new Sentence(option_face, 720 / LINE_CNT));
 	}
 
 	load_text_scenes();
@@ -106,17 +111,9 @@ void PlayMode::update(float elapsed) {
 		text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description.substr(0, char_size);
 	}
 
-//	if(total_elapsed - int(total_elapsed) >= 0.5) {
-//		overlay.AddText("test", "YEAH", {-1.0f, 0.0f}, test_face, 10000, glm::u8vec4(0xff, 0x0, 0x0, 0xff));
-//	} else {
-//		overlay.AddText("test", "abcdefghijklmnopqrstuvwxyz", {-1.0f, 0.0f}, test_face, 6000, glm::u8vec4(0x0, 0x0, 0xff, 0xff));
-//	}
-//	total_elapsed += elapsed;
-//	glm::u8vec4 color = glm::u8vec4(0x00, 0x00, 0x00, 0x00);
-
 }
 
-void PlayMode::draw(glm::uvec2 const &drawable_size) {
+void PlayMode::draw(glm::uvec2 const &window_size) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -134,29 +131,32 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 		glDisable(GL_DEPTH_TEST);
 
 		scene_sen->ClearText();
+		float scene_y_anchor = 1.0f - 2.0f / (float)LINE_CNT;
 		scene_sen->SetText(&(text_scenes[curr_scene].visible_desc[0]), 4000,
-		                   glm::u8vec4(0x0, 0x0, 0xff, 0xff), glm::vec2(-1.0f, 0.9f));
+		                   scene_desc_color,glm::vec2(-1.0f, scene_y_anchor));
 
 		for (auto s: option_sens) {
 			s->ClearText();
 		}
 
-		float y_offset = 0.8f;
+		int lines_of_desc = std::count(text_scenes[curr_scene].description.begin(),
+								 text_scenes[curr_scene].description.end(), '\n') + 1;
+		float option_y_anchor = 1.0f - (2.0f / (float)LINE_CNT) * (float)(lines_of_desc + 1);
 		for (int i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
-			bool is_selected = i == curr_choice;
-			glm::u8vec4 color = (is_selected ? glm::u8vec4(0x00, 0xff, 0xff, 0xff) :
-			                     glm::u8vec4(0xff, 0x00, 0x00, 0xff));
+			glm::u8vec4 color = i == curr_choice ? option_select_color : option_unselect_color;
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
-			                        3000, color, glm::vec2(-1.0f, y_offset));
-			y_offset -= 0.1f;
+			                        3000, color, glm::vec2(-1.0f, option_y_anchor));
+			option_y_anchor -= 0.1f;
 		}
 
-		scene_sen->Draw(drawable_size);
+		scene_sen->Draw(window_size);
 
 		for(auto s: option_sens) {
-			s->Draw(drawable_size);
+			s->Draw(window_size);
 		}
+
+//		drawFont_p->Draw(window_size);
 	}
 }
 
