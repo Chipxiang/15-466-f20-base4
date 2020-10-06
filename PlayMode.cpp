@@ -11,7 +11,6 @@
 
 #ifdef __linux__
 #include <experimental/filesystem>
-#define std::filesystem::directory_iterator std::experimental::filesystem::directory_iterator
 #else
 #include <filesystem>
 #endif
@@ -21,7 +20,13 @@
 Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -> std::map<std::string, Sound::Sample> const* {
 		auto map_p = new std::map<std::string, Sound::Sample>();
 		std::string path = data_path("musics");
-		for (const auto& entry : std::filesystem::directory_iterator(path)) {
+
+#ifdef __linux__
+	auto iterator = std::experimental::filesystem::directory_iterator(path)
+#else
+	auto iterator = std::filesystem::directory_iterator(path);
+#endif
+		for (const auto& entry : iterator) {
 			std::string path_string = entry.path().filename().string();
 			size_t start = 0;
 			size_t end = path_string.find(".opus");
