@@ -173,7 +173,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 								 text_scenes[curr_scene].description.end(), '\n') + 1;
 		float option_y_anchor = 1.0f - (2.0f / (float)LINE_CNT) * (float)(lines_of_desc + 1);
 		for (uint32_t i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
-			glm::u8vec4 color = i == curr_choice ? option_select_color : option_unselect_color;
+			glm::u8vec4 color = (int)i == curr_choice ? option_select_color : option_unselect_color;
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
 			                        3000, color, glm::vec2(-1.0f, option_y_anchor));
