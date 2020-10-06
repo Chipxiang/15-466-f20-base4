@@ -91,6 +91,7 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 			}
 			else if (evt.key.keysym.sym == SDLK_SPACE) {
 				text_scenes[curr_scene].elapsed = 0.0f;//reset
+				text_scenes[curr_scene].visible_desc.clear();//reset
 				std::map<int, bool>::iterator it;
 				for (it = text_scenes[curr_scene].played.begin(); it != text_scenes[curr_scene].played.end(); it++) {
 					it->second = false;
@@ -109,6 +110,7 @@ void PlayMode::update(float elapsed) {
 		// update scene description word
 		// check if needs to play sound
 		int cur_len = (int)text_scenes[curr_scene].visible_desc.size();
+//		std::cout<<"cur_len="<<cur_len<<std::endl;
 		if (!typing_sample && cur_len == 0) {
 			typing_sample = Sound::loop(*load_typing_effect, 1.0f);
 		}
