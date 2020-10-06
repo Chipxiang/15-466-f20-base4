@@ -80,10 +80,6 @@ PlayMode::PlayMode() {
 		throw std::runtime_error("Wrong font!");
 	}
 
-//	drawFont_p = new Sentence(desc_face, 720 / LINE_CNT);
-//	drawFont_p->SetText("abcdefghijklmnopqrstuvwxyz\nabcdefghijklmnopqrstuvwxyz\n3\n4\n5\n6\n7\n8\n9\n10", 5000, glm::u8vec4(0x0, 0x0, 0xff, 0xff), glm::vec2(-1.0f, 0.9f));
-//	drawFont_p->Draw(glm::vec2(1280, 720));
-
 	scene_sen = new Sentence(desc_face, 720 / LINE_CNT); // hard code height of each line
 	for(int i=0; i<5; i++) {
 		option_sens.emplace_back(new Sentence(option_face, 720 / LINE_CNT));
@@ -223,7 +219,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -231,7 +227,6 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 	glDepthFunc(GL_LESS); //this is the default depth comparison function, but FYI you can change it.
 
 
-	/*scene.draw(*camera);*/
 	// Reference: https://github.com/Dmcdominic/15-466-f20-game4/blob/menu-mode/MenuMode.cpp
 	{ //use DrawLines to overlay some text:
 		glDisable(GL_DEPTH_TEST);
@@ -239,7 +234,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 		scene_sen->ClearText();
 		float scene_y_anchor = 1.0f - 2.0f / (float)LINE_CNT;
 		scene_sen->SetText(&(text_scenes[curr_scene].visible_desc[0]), 4000,
-		                   scene_desc_color,glm::vec2(-1.0f, scene_y_anchor));
+		                   scene_desc_color,glm::vec2(-0.96f, scene_y_anchor));
 
 		for (auto s : option_sens) {
 			s->ClearText();
@@ -252,7 +247,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 			glm::u8vec4 color = (int)i == curr_choice ? option_select_color : option_unselect_color;
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
-			                        3000, color, glm::vec2(-1.0f, option_y_anchor));
+			                        3000, color, glm::vec2(-0.96f, option_y_anchor));
 			option_y_anchor -= (2.0f / (float)LINE_CNT) / 2.0f;
 		}
 
@@ -264,8 +259,6 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 				s->Draw(window_size);
 			}
 		}
-
-//		drawFont_p->Draw(window_size);
 	}
 }
 

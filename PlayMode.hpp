@@ -25,14 +25,10 @@ struct PlayMode : Mode {
 	FT_Face desc_face;
 	FT_Face option_face;
 
-	Sentence* drawFont_p;
 	Sentence* scene_sen = nullptr;
 	std::vector<Sentence*> option_sens;
 
 	//music coming from the tip of the leg (as a demonstration):
-
-	//camera:
-	Scene::Camera *camera = nullptr;
 
 	struct TextScene {
 		int id;
@@ -67,7 +63,7 @@ struct PlayMode : Mode {
 	const int LINE_CNT = 10;
 
 	// color used for game
-	glm::u8vec4 option_select_color = glm::u8vec4(0xff, 0x00, 0x00, 0xff);
-	glm::u8vec4 option_unselect_color = glm::u8vec4(0xff, 0x00, 0x00, 0x22);
-	glm::u8vec4 scene_desc_color = glm::u8vec4(0x00, 0x00, 0xff, 0xff);
+	glm::u8vec4 option_select_color = glm::u8vec4(0xBD, 0xFC, 0xC9, 0xff);
+	glm::u8vec4 option_unselect_color = glm::u8vec4(0xc0, 0xc0, 0xc0, 0x55);
+	glm::u8vec4 scene_desc_color = glm::u8vec4(0xff, 0xff, 0xff, 0xff);
 };
