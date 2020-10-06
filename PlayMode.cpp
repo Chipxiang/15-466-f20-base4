@@ -6,9 +6,14 @@
 #include FT_FREETYPE_H
 
 #include <fstream>
-#include <filesystem>
 #include "data_path.hpp"
 #include "Sound.hpp"
+
+#ifdef __linux__
+#include <experimental/filesystem>
+#else
+#include <filesystem>
+#endif
 
 
 // From https://github.com/wrystal/CrazyDriver
