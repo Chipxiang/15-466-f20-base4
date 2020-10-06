@@ -4,5 +4,8 @@ enjoy some music.
 You recalled that CD found on the bed.
 You inserted the CD to the player.
 The CD player started playing a short piece of music.
+(Press R to replay)
 ## 4
 Go back to the east side of the room.
+&& 161
+code
