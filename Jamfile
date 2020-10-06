@@ -79,7 +79,7 @@ if $(OS) = NT { #Windows
 		-I$(NEST_LIBS)/freetype/include                                             #freetype
 		-I$(NEST_LIBS)/harfbuzz/include                                             #harfbuzz
 		;
-	LINK = g++ -no-pie -lstdc++fs;
+	LINK = g++ -no-pie -lstdc++fs ;
 	LINKFLAGS = -std=c++17 -g -Wall -Werror ;
 	LINKLIBS =
 		`'$(NEST_LIBS)/SDL2/bin/sdl2-config' --prefix='$(NEST_LIBS)/SDL2' --static-libs` -lGL #SDL2
