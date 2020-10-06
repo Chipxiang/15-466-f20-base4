@@ -96,8 +96,53 @@ bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size)
 				for (it = text_scenes[curr_scene].played.begin(); it != text_scenes[curr_scene].played.end(); it++) {
 					it->second = false;
 				}
+				if (have_cd && text_scenes[curr_scene].next_scene[curr_choice] == 10) {
+					text_scenes[curr_scene].next_scene[curr_choice] = 11;
+				}
+				if (have_cd && text_scenes[curr_scene].next_scene[curr_choice] == 6) {
+					text_scenes[curr_scene].next_scene[curr_choice] = 12;
+				}
+				if (curr_scene == 9 && text_scenes[curr_scene].next_scene[curr_choice] == 9) {
+					if (text_scenes[curr_scene].description.find(pc_password) != std::string::npos) {
+						pc_unlock = true;
+						text_scenes[curr_scene].next_scene[curr_choice] = 13;
+					}
+					else {
+						size_t pos = text_scenes[curr_scene].description.find("EB");
+						text_scenes[curr_scene].description.replace(pos, pc_password.length(), pc_original);
+					}
+				}
+				if (curr_scene == 8 && text_scenes[curr_scene].next_scene[curr_choice] == 8) {
+					if (text_scenes[curr_scene].description.find(door_password) != std::string::npos) {
+						text_scenes[curr_scene].next_scene[curr_choice] = 15;
+					}
+					else {
+						size_t pos = text_scenes[curr_scene].description.find_last_of("\n") + 1;
+						text_scenes[curr_scene].description.replace(pos, door_password.length(), door_original);
+					}
+				}
+				if (pc_unlock && text_scenes[curr_scene].next_scene[curr_choice] == 9) {
+					text_scenes[curr_scene].next_scene[curr_choice] = 13;
+				}
+				if (pc_unlock && text_scenes[curr_scene].next_scene[curr_choice] == 7) {
+					text_scenes[curr_scene].next_scene[curr_choice] = 14;
+				}
 				curr_scene = text_scenes[curr_scene].next_scene[curr_choice];
 				curr_choice = 0;
+				if (curr_scene == 6) {
+					have_cd = true;
+				}
+				std::cout << "Current Scene" << curr_scene << std::endl;
+			}
+			else if (curr_scene == 9 && evt.key.keysym.sym >= 97 && evt.key.keysym.sym <= 122) {
+				if (text_scenes[curr_scene].description.find("_") != std::string::npos) {
+					text_scenes[curr_scene].description[text_scenes[curr_scene].description.find("_")] = (char)(evt.key.keysym.sym - 97 + 'A');
+				}
+			}
+			else if (curr_scene == 8 && evt.key.keysym.sym >= 48 && evt.key.keysym.sym <= 57) {
+				if (text_scenes[curr_scene].description.find("-") != std::string::npos) {
+					text_scenes[curr_scene].description[text_scenes[curr_scene].description.find("-")] = (char)(evt.key.keysym.sym - 48 + '0');
+				}
 			}
 		}
 	}

@@ -1,0 +1,6 @@
+13
+EBGDAE
+Password correct!
+It seems like something is unlocked in the room.
+## 4
+Go back to the east side of the room.

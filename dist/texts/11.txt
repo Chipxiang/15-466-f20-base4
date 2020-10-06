@@ -1,0 +1,8 @@
+11
+The CD player is still in good condition. If you have a CD, you can
+enjoy some music. 
+You recalled that CD found on the bed.
+You inserted the CD to the player.
+The CD player started playing a short piece of music.
+## 4
+Go back to the east side of the room.

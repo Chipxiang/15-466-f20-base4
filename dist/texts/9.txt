@@ -1,5 +1,8 @@
 9
 There's a line of mysterious code displayed on the screen of the PC.
 EBG__E
+You might want to type on the keyboard to fill that in.
+## 9
+Enter
 ## 4
 Go back to the east side of the room.

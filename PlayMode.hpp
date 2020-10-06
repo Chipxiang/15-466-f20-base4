@@ -48,6 +48,12 @@ struct PlayMode : Mode {
 	int curr_scene;
 	int curr_choice;
 	void load_text_scenes();
+	bool have_cd = false;
+	bool pc_unlock = false;
+	const std::string pc_password = "EBGDAE";
+	const std::string pc_original = "EBG__E";
+	const std::string door_password = "15666";
+	const std::string door_original = "-----";
 
 	// secs interval to pop out a char
 	float pop_char_interval = 0.01f;
