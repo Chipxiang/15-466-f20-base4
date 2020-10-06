@@ -11,6 +11,7 @@
 
 #ifdef __linux__
 #include <experimental/filesystem>
+#define std::filesystem::directory_iterator std::experimental::filesystem::directory_iterator
 #else
 #include <filesystem>
 #endif
