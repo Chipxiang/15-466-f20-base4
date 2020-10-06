@@ -2,6 +2,7 @@
 There's a line of mysterious code displayed on the screen of the PC.
 EBG__E
 You might want to type on the keyboard to fill that in.
+The code will be automatically reset upon wrong input.
 ## 9
 Enter
 ## 4

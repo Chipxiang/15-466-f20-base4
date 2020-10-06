@@ -23,6 +23,7 @@ Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -
 #if defined(_WIN32)
 	for (const auto& entry : std::filesystem::directory_iterator(base_dir)) {
 		std::string path_string = entry.path().string();
+		std::string file_name = entry.path().filename().string();
 #else
 	struct dirent *entry;
 	DIR *dp;
@@ -34,13 +35,14 @@ Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -
 	}
 	while ((entry = readdir(dp))) {
 		std::string path_string = base_dir + "/" + std::string(entry->d_name);
+		std::string file_name = std::string(entry->d_name);
 #endif
 			size_t start = 0;
-			size_t end = path_string.find(".opus");
+			size_t end = file_name.find(".opus");
 
 			if(end != std::string::npos) {
-				std::cout << path_string.substr(start, end) << std::endl;
-				map_p->emplace(path_string.substr(start, end), Sound::Sample(path_string));
+				std::cout << file_name.substr(start, end) << std::endl;
+				map_p->emplace(file_name.substr(start, end), Sound::Sample(path_string));
 			}
 		}
 		return map_p;
@@ -303,6 +305,7 @@ void PlayMode::load_text_scenes() {
 			choice_des = choice_des.substr(0, choice_des.size() - 1);
 			ts.choice_descriptions.push_back(choice_des);
 		}
+
 		while (line.rfind("&&", 0) == 0) {
 			int start_pos = std::stoi(line.substr(2));
 			if (!std::getline(f, line)) {
