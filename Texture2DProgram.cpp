@@ -54,7 +54,7 @@ Texture2DProgram::~Texture2DProgram() {
 	glDeleteProgram(program);
 	program = 0;
 }
-
+// source: https://github.com/GenBrg/MarryPrincess/blob/master/Texture2DProgram.cpp#L81
 GLuint Texture2DProgram::GetVao(GLuint vertex_buffer) const
 {
     GLuint vao;
