@@ -80,7 +80,7 @@ if $(OS) = NT { #Windows
 		-I$(NEST_LIBS)/harfbuzz/include                                             #harfbuzz
 		;
 	LINK = g++ -no-pie ;
-	LINKFLAGS = -lstdc++fs -std=c++17 -g -Wall -Werror ;
+	LINKFLAGS = -std=c++17 -g -Wall -Werror ;
 	LINKLIBS =
 		`'$(NEST_LIBS)/SDL2/bin/sdl2-config' --prefix='$(NEST_LIBS)/SDL2' --static-libs` -lGL #SDL2
 		-L$(NEST_LIBS)/libpng/lib -lpng                                                       #libpng

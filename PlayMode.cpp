@@ -9,29 +9,35 @@
 #include "data_path.hpp"
 #include "Sound.hpp"
 
-#ifdef __linux__
-#include <experimental/filesystem>
-#else
-#include <filesystem>
-#endif
+#include <dirent.h>
 
 
-// From https://github.com/wrystal/CrazyDriver
 Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -> std::map<std::string, Sound::Sample> const* {
 		auto map_p = new std::map<std::string, Sound::Sample>();
-		std::string path = data_path("musics");
+		std::string base_dir = data_path("musics");
 
-#ifdef __linux__
-	auto iterator = std::experimental::filesystem::directory_iterator(path);
+		struct dirent *entry;
+		DIR *dp;
+
+		dp = opendir(&base_dir[0]);
+		if (dp == nullptr) {
+			std::cout<<"Cannot open "<<base_dir<<"\n";
+			throw std::runtime_error("Cannot open dir");
+		}
+		std::cout<<base_dir<<std::endl;
+		while ((entry = readdir(dp))) {
+#if defined(_WIN32)
+	std::string path_string = base_dir + "\\" + std::string(entry->d_name);
 #else
-	auto iterator = std::filesystem::directory_iterator(path);
+	std::string path_string = base_dir + "/" + std::string(entry->d_name);
 #endif
-		for (const auto& entry : iterator) {
-			std::string path_string = entry.path().filename().string();
 			size_t start = 0;
 			size_t end = path_string.find(".opus");
-			std::cout << path_string.substr(start, end) << std::endl;
-			map_p->emplace(path_string.substr(start, end), Sound::Sample(entry.path().string()));
+
+			if(end != std::string::npos) {
+				std::cout << path_string.substr(start, end) << std::endl;
+				map_p->emplace(path_string.substr(start, end), Sound::Sample(path_string));
+			}
 		}
 		return map_p;
 	});
@@ -196,23 +202,32 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 
 void PlayMode::load_text_scenes() {
 	// From https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
-	std::string path = data_path("texts");
+	std::string base_dir = data_path("texts");
 
-#ifdef __linux__
-	auto iterator = std::experimental::filesystem::directory_iterator(path);
+	struct dirent *entry;
+	DIR *dp;
+
+	dp = opendir(&base_dir[0]);
+	if (dp == nullptr) {
+		std::cout<<"Cannot open "<<base_dir<<"\n";
+		throw std::runtime_error("Cannot open dir");
+	}
+	std::cout<<base_dir<<std::endl;
+	while ((entry = readdir(dp))) {
+#if defined(_WIN32)
+		std::string txt_path = base_dir + "\\" + std::string(entry->d_name);
 #else
-	auto iterator = std::filesystem::directory_iterator(path);
+		std::string txt_path = base_dir + "/" + std::string(entry->d_name);
 #endif
-	for (const auto& entry : iterator) {
-		std::cout << entry.path() << std::endl;
-		std::ifstream f(entry.path());
+		std::cout << txt_path << std::endl;
+		std::ifstream f(txt_path);
 		std::string line;
 		if (!f.is_open()) {
-			std::cout << "Unable to open file " << entry.path() << std::endl;
+			std::cout << "Unable to open file " << txt_path << std::endl;
 			continue;
 		}
 		if (!std::getline(f, line)) {
-			std::cout << entry.path() << " is an empty file! Skipped." << std::endl;
+			std::cout << txt_path << " is an empty file! Skipped." << std::endl;
 			continue;
 		}
 		int id = std::stoi(line);
@@ -251,6 +266,8 @@ void PlayMode::load_text_scenes() {
 		text_scenes[id].elapsed = 0.0f; // init timer
 		f.close();
 	}
+	closedir(dp);
+
 	std::map<int, TextScene>::iterator it;
 	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
 		//		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
