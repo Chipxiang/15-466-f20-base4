@@ -25,19 +25,14 @@ private:
 	glm::vec2 anchor_;
 	std::string text_;
 	glm::u8vec4 color_;
+	// in pixel
+	int line_height_;
 
-	float GetOpenGLPos(float pos, int drawable_size) {
-		return (2 * pos) / drawable_size - 1;
-	}
-
-	float GetPixelPos(float pos, int drawable_size) {
-		return (pos + 1) * drawable_size / 2.0f;
-	}
 public:
 	static GLuint index_buffer_;
 
-	Sentence(FT_Library& library, const char* font_path);
-	Sentence(FT_Face face);
+	Sentence(FT_Library& library, const char* font_path,  int l_height);
+	Sentence(FT_Face face, int l_height);
 	~Sentence();
 
 	void Draw(const glm::uvec2& drawable_size);

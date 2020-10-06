@@ -2,10 +2,6 @@
 
 
 #include <iostream>
-//constexpr const char * const kFontPath { "/System/Library/Fonts/SFCompactRounded.ttf" };
-
-
-#include <random>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
@@ -15,13 +11,23 @@
 #include "Sound.hpp"
 
 
-//Load< Sound::Sample > dusty_floor_sample(LoadTagDefault, []() -> Sound::Sample const * {
-//	return new Sound::Sample(data_path("dusty-floor.opus"));
-//});
+// From https://github.com/wrystal/CrazyDriver
+Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -> std::map<std::string, Sound::Sample> const* {
+		auto map_p = new std::map<std::string, Sound::Sample>();
+		std::string path = data_path("musics");
+		for (const auto& entry : std::filesystem::directory_iterator(path)) {
+			std::string path_string = entry.path().filename().string();
+			size_t start = 0;
+			size_t end = path_string.find(".opus");
+			std::cout << path_string.substr(start, end) << std::endl;
+			map_p->emplace(path_string.substr(start, end), Sound::Sample(entry.path().string()));
+		}
+		return map_p;
+	});
 
-Load< Sound::Sample > load_typing_effect(LoadTagDefault, []() -> Sound::Sample const * {
-	return new Sound::Sample(data_path("typing.opus"));
-});
+Load< Sound::Sample > load_typing_effect(LoadTagDefault, []() -> Sound::Sample const* {
+		return new Sound::Sample(data_path("musics/typing.opus"));
+	});
 
 PlayMode::PlayMode() {
 	FT_Library library;
@@ -29,6 +35,7 @@ PlayMode::PlayMode() {
 	if (error_lib) {
 		std::cout << "Init library failed." << std::endl;
 	}
+
 	std::string desc_font_path = data_path("ReallyFree-ALwl7.ttf");
 	FT_Error error_1 = FT_New_Face(library, &(desc_font_path[0]), 0, &desc_face);
 
@@ -51,7 +58,6 @@ PlayMode::PlayMode() {
 //	drawFont_p->SetText("abcdefghijklmnopqrstuvwxyz\nabcdefghijklmnopqrstuvwxyz\n3\n4\n5\n6\n7\n8\n9\n10", 5000, glm::u8vec4(0x0, 0x0, 0xff, 0xff), glm::vec2(-1.0f, 0.9f));
 //	drawFont_p->Draw(glm::vec2(1280, 720));
 
-
 	scene_sen = new Sentence(desc_face, 720 / LINE_CNT); // hard code height of each line
 	for(int i=0; i<5; i++) {
 		option_sens.emplace_back(new Sentence(option_face, 720 / LINE_CNT));
@@ -63,12 +69,14 @@ PlayMode::PlayMode() {
 }
 
 PlayMode::~PlayMode() {
-	
+
 }
 
-bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
+bool PlayMode::handle_event(SDL_Event const& evt, glm::uvec2 const& window_size) {
 	// Reference https://github.com/Dmcdominic/15-466-f20-game4/blob/menu-mode/MenuMode.cpp
-	if (!text_scenes[curr_scene].choice_descriptions.empty()) {
+	if (!text_scenes[curr_scene].choice_descriptions.empty() &&
+			text_scenes[curr_scene].description.size() == text_scenes[curr_scene].visible_desc.size()) {
+		// only response key board after showing all scene description
 		if (evt.type == SDL_KEYDOWN) {
 			if (evt.key.keysym.sym == SDLK_DOWN) {
 				curr_choice += 1;
@@ -83,12 +91,16 @@ bool PlayMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size)
 			}
 			else if (evt.key.keysym.sym == SDLK_SPACE) {
 				text_scenes[curr_scene].elapsed = 0.0f;//reset
+				std::map<int, bool>::iterator it;
+				for (it = text_scenes[curr_scene].played.begin(); it != text_scenes[curr_scene].played.end(); it++) {
+					it->second = false;
+				}
 				curr_scene = text_scenes[curr_scene].next_scene[curr_choice];
 				curr_choice = 0;
 			}
 		}
 	}
-	
+
 	return false;
 }
 
@@ -96,21 +108,26 @@ void PlayMode::update(float elapsed) {
 	{
 		// update scene description word
 		// check if needs to play sound
-		int cur_len = text_scenes[curr_scene].visible_desc.size();
-		if(!typing_sample && cur_len == 0) {
+		int cur_len = (int)text_scenes[curr_scene].visible_desc.size();
+		if (!typing_sample && cur_len == 0) {
 			typing_sample = Sound::loop(*load_typing_effect, 1.0f);
 		}
 
-		if(typing_sample && cur_len == text_scenes[curr_scene].description.size()) {
+		if (typing_sample && cur_len == text_scenes[curr_scene].description.size()) {
 			typing_sample->stop();
 			typing_sample = nullptr;
 		}
 
 		text_scenes[curr_scene].elapsed += elapsed;
-		int char_size = (int) (text_scenes[curr_scene].elapsed / pop_char_interval);
+		int char_size = (int)(text_scenes[curr_scene].elapsed / pop_char_interval);
 		text_scenes[curr_scene].visible_desc = text_scenes[curr_scene].description.substr(0, char_size);
+		if (text_scenes[curr_scene].sounds.find((int)text_scenes[curr_scene].visible_desc.size()) != text_scenes[curr_scene].sounds.end()) {
+			if (!text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()]) {
+				Sound::play((*sound_samples).at(text_scenes[curr_scene].sounds[(int)text_scenes[curr_scene].visible_desc.size()]));
+				text_scenes[curr_scene].played[(int)text_scenes[curr_scene].visible_desc.size()] = true;
+			}
+		}
 	}
-
 }
 
 void PlayMode::draw(glm::uvec2 const &window_size) {
@@ -135,7 +152,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 		scene_sen->SetText(&(text_scenes[curr_scene].visible_desc[0]), 4000,
 		                   scene_desc_color,glm::vec2(-1.0f, scene_y_anchor));
 
-		for (auto s: option_sens) {
+		for (auto s : option_sens) {
 			s->ClearText();
 		}
 
@@ -147,13 +164,16 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
 			                        3000, color, glm::vec2(-1.0f, option_y_anchor));
-			option_y_anchor -= 0.1f;
+			option_y_anchor -= (2.0f / (float)LINE_CNT) / 2.0f;
 		}
 
 		scene_sen->Draw(window_size);
 
-		for(auto s: option_sens) {
-			s->Draw(window_size);
+		if(text_scenes[curr_scene].description.size() == text_scenes[curr_scene].visible_desc.size()) {
+			// only draw until all scene desc appear
+			for(auto s: option_sens) {
+				s->Draw(window_size);
+			}
 		}
 
 //		drawFont_p->Draw(window_size);
@@ -166,7 +186,7 @@ void PlayMode::load_text_scenes() {
 	std::string path = data_path("texts");
 	for (const auto& entry : std::filesystem::directory_iterator(path)) {
 		std::cout << entry.path() << std::endl;
-		std::ifstream f (entry.path());
+		std::ifstream f(entry.path());
 		std::string line;
 		if (!f.is_open()) {
 			std::cout << "Unable to open file " << entry.path() << std::endl;
@@ -192,11 +212,21 @@ void PlayMode::load_text_scenes() {
 			while (std::getline(f, line)) {
 				if (line.rfind("##", 0) == 0)
 					break;
+				if (line.rfind("&&", 0) == 0)
+					break;
 				choice_des.append(line.append("\n"));
 			}
 			choice_des = choice_des.substr(0, choice_des.size() - 1);
-
 			ts.choice_descriptions.push_back(choice_des);
+		}
+		while (line.rfind("&&", 0) == 0) {
+			int start_pos = std::stoi(line.substr(2));
+			if (!std::getline(f, line)) {
+				std::cout << "Music not specified!" << std::endl;
+				continue;
+			}
+			ts.sounds[start_pos] = line;
+			ts.played[start_pos] = false;
 		}
 		text_scenes[id] = ts;
 		text_scenes[id].elapsed = 0.0f; // init timer
@@ -204,10 +234,10 @@ void PlayMode::load_text_scenes() {
 	}
 	std::map<int, TextScene>::iterator it;
 	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
-//		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
+		//		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
 		for (int i = 0; i < it->second.next_scene.size(); i++) {
-//			std::cout << "Choice: " << it->second.next_scene[i] << std::endl;
-//			std::cout << "Description: " << it->second.choice_descriptions[i] << std::endl;
+			//			std::cout << "Choice: " << it->second.next_scene[i] << std::endl;
+			//			std::cout << "Description: " << it->second.choice_descriptions[i] << std::endl;
 		}
 	}
 }

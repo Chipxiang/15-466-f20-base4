@@ -16,8 +16,13 @@ How To Play:
 
 Sources: (TODO: list a source URL for any assets you did not create yourself. Make sure you have a license for the asset.)
 Really Free Font: https://www.fontspace.com/really-font-f45186
+Sound:
+Walking: https://freesound.org/people/13FPanska_Stranska_Michaela/sounds/378398/
+Keyboard: https://freesound.org/people/Trollarch2/sounds/331656/
+Open box: https://freesound.org/people/tommy_mooney/sounds/386696/
+Make bed: https://freesound.org/people/Iamgiorgio/sounds/371308/
+Flip book: https://freesound.org/people/Tats14/sounds/408786/
+Lock open: https://freesound.org/people/fastson/sounds/399120/
+Read disk: https://freesound.org/people/Anika11/sounds/325686/
 
 This game was built with [NEST](NEST.md).
-
-## Resource
-Sound keyboard: https://freesound.org/people/Trollarch2/sounds/331656/
