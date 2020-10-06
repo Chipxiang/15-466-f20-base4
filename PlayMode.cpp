@@ -22,7 +22,7 @@ Load< std::map<std::string, Sound::Sample>> sound_samples(LoadTagDefault, []() -
 		std::string path = data_path("musics");
 
 #ifdef __linux__
-	auto iterator = std::experimental::filesystem::directory_iterator(path)
+	auto iterator = std::experimental::filesystem::directory_iterator(path);
 #else
 	auto iterator = std::filesystem::directory_iterator(path);
 #endif
@@ -120,7 +120,7 @@ void PlayMode::update(float elapsed) {
 	{
 		// update scene description word
 		// check if needs to play sound
-		int cur_len = (int)text_scenes[curr_scene].visible_desc.size();
+		uint32_t cur_len = text_scenes[curr_scene].visible_desc.size();
 //		std::cout<<"cur_len="<<cur_len<<std::endl;
 		if (!typing_sample && cur_len == 0) {
 			typing_sample = Sound::loop(*load_typing_effect, 1.0f);
@@ -172,7 +172,7 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 		int lines_of_desc = (int)std::count(text_scenes[curr_scene].description.begin(),
 								 text_scenes[curr_scene].description.end(), '\n') + 1;
 		float option_y_anchor = 1.0f - (2.0f / (float)LINE_CNT) * (float)(lines_of_desc + 1);
-		for (int i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
+		for (uint32_t i = 0; i < text_scenes[curr_scene].choice_descriptions.size() && i < option_sens.size(); i++) {
 			glm::u8vec4 color = i == curr_choice ? option_select_color : option_unselect_color;
 
 			option_sens[i]->SetText(&(text_scenes[curr_scene].choice_descriptions[i][0]),
@@ -197,7 +197,13 @@ void PlayMode::draw(glm::uvec2 const &window_size) {
 void PlayMode::load_text_scenes() {
 	// From https://stackoverflow.com/questions/612097/how-can-i-get-the-list-of-files-in-a-directory-using-c-or-c
 	std::string path = data_path("texts");
-	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+
+#ifdef __linux__
+	auto iterator = std::experimental::filesystem::directory_iterator(path);
+#else
+	auto iterator = std::filesystem::directory_iterator(path);
+#endif
+	for (const auto& entry : iterator) {
 		std::cout << entry.path() << std::endl;
 		std::ifstream f(entry.path());
 		std::string line;
@@ -248,7 +254,7 @@ void PlayMode::load_text_scenes() {
 	std::map<int, TextScene>::iterator it;
 	for (it = text_scenes.begin(); it != text_scenes.end(); it++) {
 		//		std::cout << "Current Scene: " << it->first << std::endl << "Description: " << it->second.description << std::endl;
-		for (int i = 0; i < it->second.next_scene.size(); i++) {
+		for (uint32_t i = 0; i < it->second.next_scene.size(); i++) {
 			//			std::cout << "Choice: " << it->second.next_scene[i] << std::endl;
 			//			std::cout << "Description: " << it->second.choice_descriptions[i] << std::endl;
 		}
