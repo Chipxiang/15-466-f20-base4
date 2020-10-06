@@ -7,3 +7,5 @@ It ran away.
 The fourth drawer is locked.
 ## 3
 Go back to west side of room.
+&& 36
+drawer-open

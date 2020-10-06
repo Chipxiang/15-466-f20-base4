@@ -9,3 +9,5 @@ There's number on it:
 15666
 ## 3
 Go back to west side of room.
+&& 36
+drawer-open
