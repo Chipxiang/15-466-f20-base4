@@ -10,3 +10,5 @@ Look at the PC.
 Check the CD player.
 ## 2
 Go back to center of room.
+&& 2
+walk

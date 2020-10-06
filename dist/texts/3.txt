@@ -10,3 +10,5 @@ Approach the bed.
 Investigate the drawers.
 ## 2
 Go back to center of room.
+&& 2
+walk
