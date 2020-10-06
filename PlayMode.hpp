@@ -66,4 +66,8 @@ struct PlayMode : Mode {
 	glm::u8vec4 option_select_color = glm::u8vec4(0xBD, 0xFC, 0xC9, 0xff);
 	glm::u8vec4 option_unselect_color = glm::u8vec4(0xc0, 0xc0, 0xc0, 0x55);
 	glm::u8vec4 scene_desc_color = glm::u8vec4(0xff, 0xff, 0xff, 0xff);
+
+	// the end related
+	float ending_elapsed = 0.0f;
+	float transition_last_sec = 3.0f;
 };

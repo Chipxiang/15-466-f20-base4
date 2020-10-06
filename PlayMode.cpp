@@ -213,13 +213,28 @@ void PlayMode::update(float elapsed) {
 			}
 		}
 	}
+
+	{
+		// last scene
+		if(text_scenes[curr_scene].description.size() == text_scenes[curr_scene].visible_desc.size() &&
+				curr_scene == 15) {
+			// last scene, show white background and "THE END"
+			ending_elapsed += elapsed;
+		}
+	}
 }
 
 void PlayMode::draw(glm::uvec2 const &window_size) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	if(ending_elapsed > 0.0f) {
+		float val = std::min(ending_elapsed / transition_last_sec, 1.0f);
+
+		glClearColor(val, val, val, 1.0f);
+	} else {
+		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	}
 	glClearDepth(1.0f); //1.0 is actually the default value to clear the depth buffer to, but FYI you can change it.
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
